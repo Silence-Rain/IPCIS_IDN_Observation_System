@@ -20,7 +20,8 @@ def plot(data):
 
     plt.show()
 
-
+# 散点图
+# 输入数据格式：[[x1,y1], [x2,y2], ...]
 def plot_scatter(data):
     datax =  list(np.array(data)[:, 0])
     datax[0] = 0.2
@@ -38,7 +39,8 @@ def plot_scatter(data):
 
     plt.show()
 
-
+# 折线图
+# 输入数据格式：{'x轴范围1':数量1, 'x轴范围2':数量2, ...}（eg.{'0-1800':1000, '1800-3600':2000}）
 def plot_bar(data):
     plt.figure(figsize=(40, 14), dpi=70)
     plt.title("TTL Distribution Analysis")
@@ -62,7 +64,8 @@ def plot_bar(data):
 
     plt.show()
 
-
+# 饼状图
+# 输入数据格式：[A部分所占百分比, B部分所占百分比]（eg. [30, 70]）
 def plot_pie(data):
     plt.figure(figsize=(6, 6))
     plt.title("DGA domain percentage")
