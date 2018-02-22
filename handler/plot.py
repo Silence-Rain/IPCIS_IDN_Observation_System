@@ -16,7 +16,7 @@ def plot(data):
 
     plt.plot(datax, np.array(data)[:, 1])
 
-    print "plot ended."
+    print("plot ended.")
 
     plt.show()
 
@@ -34,13 +34,13 @@ def plot_scatter(data):
 
     plt.scatter(datax, np.array(data)[:, 1], s=5)
 
-    print "plot ended."
+    print("plot ended.")
 
     plt.show()
 
 
 def plot_bar(data):
-    plt.figure(figsize=(40, 15), dpi=70)
+    plt.figure(figsize=(40, 14), dpi=70)
     plt.title("TTL Distribution Analysis")
     plt.xlabel("TTL /s")
     plt.ylabel("Amount")
@@ -52,7 +52,7 @@ def plot_bar(data):
 
     for index in range(len(data.keys())):
         if index % 3 == 0:
-            xtick.append(data.keys()[index].split("-")[0])
+            xtick.append(list(data.keys())[index].split("-")[0])
         else:
             xtick.append('')
 
@@ -60,4 +60,17 @@ def plot_bar(data):
 
     plt.plot(data.values())
 
+    plt.show()
+
+
+def plot_pie(data):
+    plt.figure(figsize=(6, 6))
+    plt.title("DGA domain percentage")
+
+    labels = ["Non-DGA", "DGA"]
+    explode = [0, 0.1]
+    plt.axes(aspect=1)
+    plt.pie(x=data, labels=labels, explode=explode, autopct = '%3.1f%%', labeldistance=1.1, startangle = 90, pctdistance = 0.6)
+
+    plt.legend()
     plt.show()
