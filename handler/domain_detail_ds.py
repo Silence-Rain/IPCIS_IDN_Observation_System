@@ -1,19 +1,17 @@
 #!coding=utf8
 
 import mysql
+import time
 
 def create_db():
 	sql = ("CREATE TABLE IF NOT EXISTS domain_detail ( domain_id INT(10) UNSIGNED NOT NULL DEFAULT 0," 
 		"primary_domain VARCHAR(128) NOT NULL DEFAULT '', "
 		"is_dga INT(10) UNSIGNED NOT NULL DEFAULT 0, "
      	"ttl INT(10) UNSIGNED NOT NULL DEFAULT 0, "
-	    "ftime INT(10) UNSIGNED NOT NULL DEFAULT 0, "
-	    "ltime INT(10) UNSIGNED NOT NULL DEFAULT 0, "
 	    "registrar VARCHAR(64), "
 	    "registrant VARCHAR(64), "
 	    "register_date VARCHAR(16), "
 	    "expire_date VARCHAR(16), "
-	    "ips TEXT NOT NULL DEFAULT '', "
 	    "PRIMARY KEY(domain_id, primary_domain) "
 	    " ) ENGINE=INNODB DEFAULT CHARSET=utf8;")
 
@@ -26,8 +24,8 @@ def create_db():
 
 def init_db():
 	# 对domain_name和domain_whois表中的信息进行初始化
-	sql_name = ("INSERT INTO domain_detail (domain_id, primary_domain, is_dga, ttl, ftime, ltime) "
-		"SELECT domain_id, primary_domain, is_dga, ttl, ftime, ltime FROM domain_name;")
+	sql_name = ("INSERT INTO domain_detail (domain_id, primary_domain, is_dga, ttl) "
+		"SELECT domain_id, primary_domain, is_dga, ttl FROM domain_name;")
 	sql_whois = ("UPDATE domain_detail as a INNER JOIN domain_whois as b "
 		"on a.primary_domain=b.primary_domain SET "
 		"a.registrar=b.registrar, a.registrant=b.registrant, "
@@ -71,7 +69,8 @@ if __name__ == "__main__":
 	try:
 		create_db()
 		init_db()
+		print("complete!")
 	except Exception as e:
-		print(e)
+		print(e, time.asctime(time.localtime(time.time())))
 	finally:
 		mysql.conn.close()
