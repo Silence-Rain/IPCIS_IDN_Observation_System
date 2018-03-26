@@ -1,19 +1,20 @@
 #!coding=utf8
 
-import mysql
 import time
+import io
+import mysql
 import utils
 
 pds = []
 
 def read_data():
 	# 从文件中读取恶意域名信息
-	with open("./data/3mths.txt", "r", encoding="utf8") as f:
+	with io.open("../data/3mths.txt", "r", encoding="latin1") as f:
 		for line in f.readlines():
 			temp = line.strip().split("=")
 			temp[0] = temp[0].strip()
 			# temp[1] = temp[1].split(",")
-		pds.append(temp[0])
+			pds.append(temp[0])
 
 def create_db():
 	sql = ("CREATE TABLE IF NOT EXISTS domain_detail ( domain_id INT(10) UNSIGNED NOT NULL DEFAULT 0," 
@@ -40,7 +41,7 @@ def init_db():
 	for item in pds:
 		sql_name = ("INSERT INTO domain_detail (domain_id, primary_domain, is_dga, ttl) "
 			"SELECT domain_id, primary_domain, is_dga, ttl FROM domain_name "
-			"WHERE primary_domain = %s;" % item)
+			"WHERE primary_domain = '%s';" % item)
 		
 		try:
 			mysql.cursor.execute(sql_name)
@@ -65,21 +66,29 @@ def add_register_length():
 	time_diff = []
 
 	for item in pds:
-		sql_get = ("SELECT register_time, expire_time FROM domain_whois "
-		"WHERE domain_name = %s;") % item
+		sql_get = ("SELECT register_date, expire_date FROM domain_whois "
+		"WHERE primary_domain = '%s';") % item
 
 		mysql.cursor.execute(sql_get)
 		rs = mysql.cursor.fetchone()
 
-		times.append(list(rs))
+		if rs != None:
+			times.append(list(rs))
+		else:
+			times.append([])
 
 	for item in times:
-		temp = utils.standard2timestamp(item[1]) - standard2timestamp(item[0])
-		time_diff.append(utils.timestamp2standard(temp))
+		# if len(item) != 0:
+		# 	if item[0] != '' and item[1] != '':
+		try:	
+			temp = utils.standard2timestamp(item[1]) - utils.standard2timestamp(item[0])
+			time_diff.append(utils.timestamp2diff(temp))
+		except:
+			time_diff.append('')
 
 	for i in range(0, len(pds)):
-		sql_set = ("UPDATE domain_detail SET register_length = %s "
-		"WHERE primary_domain = %s;") % (time_diff[i], pds[i])
+		sql_set = ("UPDATE domain_detail SET register_length = '%s' "
+		"WHERE primary_domain = '%s';") % (time_diff[i], pds[i])
 
 		try:
 			mysql.cursor.execute(sql_set)
@@ -92,11 +101,10 @@ def add_register_length():
 if __name__ == "__main__":
 	try:
 		read_data()
-		create_db()
-		init_db()
+		#create_db()
+		#init_db()
 		add_register_length()
-		print("complete!")
-	except Exception as e:
-		print(e, time.asctime(time.localtime(time.time())))
+	# except Exception as e:
+	# 	print(e, time.asctime(time.localtime(time.time())))
 	finally:
 		mysql.conn.close()
