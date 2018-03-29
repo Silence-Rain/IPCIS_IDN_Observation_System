@@ -1,4 +1,4 @@
 **/data
 **/__pycache__/
-Malicious_Domain_Detect/utils/mysql.py
+Malicious_Domain_Detect/data_analysis/utils/mysql.py
 
