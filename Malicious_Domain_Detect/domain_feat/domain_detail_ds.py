@@ -2,8 +2,10 @@
 
 import time
 import io
-import mysql
-import utils
+import sys
+sys.path.append("..")
+import utils.datetime as datetime
+import utils.mysql as mysql
 
 pds = []
 
@@ -78,8 +80,8 @@ def add_register_length():
 
 	for item in times:
 		try:	
-			temp = utils.standard2timestamp(item[1]) - utils.standard2timestamp(item[0])
-			time_diff.append(utils.timestamp2diff(temp))
+			temp = datetime.standard2timestamp(item[1]) - datetime.standard2timestamp(item[0])
+			time_diff.append(datetime.timestamp2diff(temp))
 		except:
 			time_diff.append('')
 

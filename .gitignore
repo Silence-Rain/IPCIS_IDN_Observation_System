@@ -1,5 +1,4 @@
-data/
-diagram/
-handler/mysql.py
-handler/__pycache__/
+**/data
+**/__pycache__/
+Malicious_Domain_Detect/utils/mysql.py
 
