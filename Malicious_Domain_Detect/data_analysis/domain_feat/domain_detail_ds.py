@@ -20,7 +20,7 @@ def read_data():
 def create_db():
 	sql = ("CREATE TABLE IF NOT EXISTS bad_domain_detail ( domain_id INT(10) UNSIGNED NOT NULL DEFAULT 0," 
 		"primary_domain VARCHAR(128) NOT NULL DEFAULT '', "
-		"is_dga INT(10) UNSIGNED NOT NULL DEFAULT 0, "
+		"is_dga INT(10) UNSIGNED NOT NULL "
      	"ttl INT(10) UNSIGNED NOT NULL, "
      	"credit INT(10) UNSIGNED, "
 	    "register_location VARCHAR(32) DEFAULT '', "
@@ -118,7 +118,10 @@ def add_credit_evidence():
 			ret.append(None)
 
 	for item in ret:
-		sql_update = "UPDATE bad_domain_detail SET credit=%d;" % item
+		if temp == None:
+			sql_update = "UPDATE bad_domain_detail SET credit=NULL;"
+		else:
+			sql_update = "UPDATE bad_domain_detail SET credit=%d;" % item
 
 		try:
 			mysql.cursor.execute(sql_update)
@@ -131,9 +134,9 @@ def add_credit_evidence():
 if __name__ == "__main__":
 	try:
 		read_data()
-		create_db()
-		init_db()
-		add_register_length()
+		# create_db()
+		# init_db()
+		# add_register_length()
 		add_credit_evidence()
 	except Exception as e:
 		print(e, time.asctime(time.localtime(time.time())))
