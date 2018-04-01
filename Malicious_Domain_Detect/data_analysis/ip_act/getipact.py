@@ -7,7 +7,7 @@ import utils.mkdir as mkdir
 import io
 import glob
 
-#传入 域名 文件夹地址，返回字典内容——文件名：(通讯记录行数,{前三活跃的端口:记录数})
+#传入 域名 文件夹地址，返回字典内容——文件名：(通讯记录行数,[(前三活跃的端口:记录数)])
 def getIpactCount(addr):
     data={}
     read_files=glob.glob(addr+"/*.txt")
@@ -16,13 +16,19 @@ def getIpactCount(addr):
         with open(i,'r') as infile:
             ipact=infile.readlines()
             # TODO: 端口活跃记录
-            # temp = {}
-            # for line in ipact:
-            #     arr = line.split(" ")
+            temp = {}
+            # 对指定ip的所有活动记录，统计端口活跃度
+            for line in ipact:
+                arr = line.split(" ")
+                if temp.has_key(arr[3]):
+                    temp[arr[3]] += 1
+                else:
+                    temp[arr[3]] = 1
 
+            res = sorted(temp.items(), key=lambda item:item[1])[:3]
 
         count=len(ipact)
-        data[i.split("\\")[-1].split(".")[0]]=count
+        data[i.split("\\")[-1].split(".")[0]]=(count, res)
     return data
 
 
