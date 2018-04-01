@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import MySQLdb
+import utils.mysql as mysql
 import os  
 import socket
 import struct
@@ -17,17 +17,7 @@ for  line in  file.readlines():
 for i in range(len(name_list)):
      name_list[i]=name_list[i].strip()   
      
-#打印测试
-#for  ip in  name_list:
-#        print (ip)
-
 file.close()
-
-#连接数据库
-conn = MySQLdb.connect(host='127.0.0.1',port= 3307,user = 'root',passwd='rootofmysql',db='IPCIS_DNS_DB') #db：库名
-
-#创建游标
-cur = conn.cursor()
 
 #ip字典
 ip_dic = {}
@@ -36,11 +26,11 @@ ip_dic = {}
 for name in name_list :
    sql = "select ip from resolved_ip where domain_name='"+name+"';"
    #执行SQL语句
-   cur.execute(sql)
+   mysql.cursor.execute(sql)
    
    
    #fetchall:获取ip的数据
-   ip = cur.fetchall()
+   ip = mysql.cursor.fetchall()
    if len(ip) !=0:
        ip = list(ip[0])
    else:
@@ -58,11 +48,8 @@ file.write(str(ip_dic))
 file.close()  
 
 
-#提交
-conn.commit()
-
 #关闭指针对象
-cur.close()
+mysql.cursor.close()
 
 #关闭连接对象
-conn.close()
+mysql.conn.close()

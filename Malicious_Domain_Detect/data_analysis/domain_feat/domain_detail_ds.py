@@ -20,7 +20,7 @@ def read_data():
 def create_db():
 	sql = ("CREATE TABLE IF NOT EXISTS bad_domain_detail ( domain_id INT(10) UNSIGNED NOT NULL DEFAULT 0," 
 		"primary_domain VARCHAR(128) NOT NULL DEFAULT '', "
-		"is_dga INT(10) UNSIGNED NOT NULL "
+		"is_dga INT(10) UNSIGNED NOT NULL, "
      	"ttl INT(10) UNSIGNED NOT NULL, "
      	"credit INT(10) UNSIGNED, "
 	    "register_location VARCHAR(32) DEFAULT '', "
@@ -113,15 +113,15 @@ def add_credit_evidence():
 				if item == "safe" or item == "unsure":
 					temp = scoreDict[item]
 
-			ret.append(temp)
+			ret.append((pd, temp))
 		else:
-			ret.append(None)
+			ret.append((pd, None))
 
 	for item in ret:
-		if temp == None:
-			sql_update = "UPDATE bad_domain_detail SET credit=NULL;"
+		if item[1] == None:
+			sql_update = "UPDATE bad_domain_detail SET credit=NULL WHERE primary_domain='%s';" % item[0]
 		else:
-			sql_update = "UPDATE bad_domain_detail SET credit=%d;" % item
+			sql_update = "UPDATE bad_domain_detail SET credit=%d WHERE primary_domain='%s';" % (item[1], item[0])
 
 		try:
 			mysql.cursor.execute(sql_update)
