@@ -25,12 +25,8 @@
 
 ### 分工
 
-监测系统前端：[@Silence-Rain](https://github.com/Silence-Rain)
-
-监测系统后端服务器：[@Silence-Rain](https://github.com/Silence-Rain)，[@Mindbooom](https://github.com/Mindbooom)
-
-域名特征测度数据分析：[@xudongh123](https://github.com/xudongh123)
-
-域名特征测度数据库运维：[@hhinamoy](https://github.com/hhinamoy)
-
-同形异义域名及其他恶意域名的收集：[@wtharry](https://github.com/wtharry)
+- 监测系统前端：[@Silence-Rain](https://github.com/Silence-Rain)
+- 监测系统后端服务器：[@Silence-Rain](https://github.com/Silence-Rain)，[@Mindbooom](https://github.com/Mindbooom)
+- 域名特征测度数据分析：[@xudongh123](https://github.com/xudongh123)
+- 域名特征测度数据库运维：[@hhinamoy](https://github.com/hhinamoy)
+- 同形异义域名及其他恶意域名的收集：[@wtharry](https://github.com/wtharry)
