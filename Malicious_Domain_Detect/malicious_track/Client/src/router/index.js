@@ -13,27 +13,29 @@ export default new Router({
     {
     	path: '/',
     	name: 'Index',
-    	component: Index
-    },
-    {
-    	path: "/Info",
-    	name: "Info",
-    	component: Info
-    },
-    {
-    	path: "/Trend",
-    	name: "Trend",
-    	component: Trend
-    },
-    {
-    	path: "/Map",
-    	name: "Map",
-    	component: Map
-    },
-    {
-    	path: "/Relation",
-    	name: "Relation",
-    	component: Relation
+    	component: Index,
+    	children:[
+    		{
+		    	path: "/Info",
+		    	name: "Info",
+		    	component: Info
+		    },
+		    {
+		    	path: "/Trend",
+		    	name: "Trend",
+		    	component: Trend
+		    },
+		    {
+		    	path: "/Map",
+		    	name: "Map",
+		    	component: Map
+		    },
+		    {
+		    	path: "/Relation",
+		    	name: "Relation",
+		    	component: Relation
+		    }
+    	]
     }
   ]
 })

@@ -15,38 +15,30 @@
             <Layout style="padding: 0 50px;">              
                 <Breadcrumb class="current-target">
                     <BreadcrumbItem>{{targetDomain}}</BreadcrumbItem>
-                    <BreadcrumbItem>{{pages[curPage]}}</BreadcrumbItem>
+                    <BreadcrumbItem>{{pages[curPage][0]}}</BreadcrumbItem>
                 </Breadcrumb>
                 <Content class="content">
                     <Layout>
                         <!-- 侧边栏 -->
-                        <Sider hide-trigger :style="{background: '#fff'}">
-                            <Menu active-name="0" theme="light" width="auto">
+                        <Sider hide-trigger style="background:#fff;">
+                            <Menu active-name="0" theme="light" width="auto" @on-select="route">
                                 <MenuItem name="0">
-                                    <router-link to="/Info">
-                                        <Icon type="ios-information"></Icon>
-                                        概览
-                                    </router-link>
+                                    <Icon type="ios-information"></Icon>
+                                    概览
                                 </MenuItem>
-                                <Submenu name="1">
+                                <Submenu name="-1">
                                     <template slot="title">
                                         <Icon type="ios-albums"></Icon>
                                         实时动态
                                     </template>
-                                    <MenuItem name="1-1">
-                                        <router-link to="/Trend">
-                                            流量趋势
-                                        </router-link>
+                                    <MenuItem name="1">
+                                        流量趋势
                                     </MenuItem>
-                                    <MenuItem name="1-2">
-                                        <router-link to="/Map">
-                                            地理位置分布
-                                        </router-link>
+                                    <MenuItem name="2">
+                                        地理位置分布
                                     </MenuItem>
-                                    <MenuItem name="1-3">
-                                        <router-link to="/Relation">
-                                            通信对象
-                                        </router-link>
+                                    <MenuItem name="3">
+                                        通信对象
                                     </MenuItem>
                                 </Submenu>
                             </Menu>
@@ -54,7 +46,7 @@
 
                         <!-- 页面主体部分 -->
                         <Content class="content">
-                            <router-view></router-view>
+                            <router-view/>
                         </Content>
                     </Layout>
                 </Content>
@@ -70,56 +62,22 @@
         data () {
             return {
                 targetDomain: "test.com",
-                pages: ["概览", "流量趋势", "地理位置分布", "通信对象"],
+                pages: [
+                ["概览", "Info"], 
+                ["流量趋势", "Trend"], 
+                ["地理位置分布", "Map"], 
+                ["通信对象", "Relation"]
+                ],
                 curPage: 0,
-                isLoading: false,
-                staticCol: [
-                    {
-                        title: "是否DGA",
-                        key: "is_dga"
-                    },
-                    {
-                        title: "生存时间（TTL）",
-                        key: "ttl"
-                    },
-                    {
-                        title: "注册时长/年",
-                        key: "register_years"
-                    }
-                ],
-                staticInfo: [
-                    {
-                        is_dga: true,
-                        ttl: 86400,
-                        register_years: 16
-                    }
-                ],
-                dynCol: [
-                    {
-                        title: "子域名",
-                        key: "domain_name"
-                    },
-                    {
-                        title: "解析IP",
-                        key: "ip_1"
-                    },
-                    {
-                        title: "活动量",
-                        key: "ip_activity"
-                    }
-                ],
-                dynInfo: [
-                    {
-                        domain_name: "aaa.test.com",
-                        ip_1: "118.89.140.118",
-                        ip_activity: 100
-                    },
-                    {
-                        domain_name: "bbb.test.com",
-                        ip_1: "192.168.1.1",
-                        ip_activity: 50
-                    }
-                ]
+            }
+        },
+
+        methods: {
+            route (name) {
+                if (name >= 0) {
+                    this.curPage = name
+                    this.$router.push(this.pages[this.curPage][1])
+                }
             }
         }
     }
