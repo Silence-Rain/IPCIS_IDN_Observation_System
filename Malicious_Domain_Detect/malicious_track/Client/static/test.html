@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+	<meta charset='utf-8'>
+	<style type="text/css">
+		.auto{
+			background-color: #778899;
+			border: 0;
+			border-radius: 5px;
+			color: #fff;
+		}
+	</style>
+
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=9QDEhrhgyE9sucnUWcKsQGATp1al2Mvx"></script>
+	<script type="text/javascript" src="http://unpkg.com/inmap/dist/inmap.min.js"></script>
+	<script type="text/javascript" src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body>
+	<div id="allmap" style="width:100%;height:500px"> </div>
+</body>
+
+<script type="text/javascript">
+	let url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?" + 
+			"IpSets=211.65.193.193:32-211.65.197.210:32-202.112.23.167:32-211.65.192.172:32" + 
+			"&TableName=2018-05-03&Mode=1"
+	var data;
+	$.ajax({
+		type: "GET",
+		url: url,
+		dataType: "json",
+		success: function (res) {
+			data = res;
+		},
+		error: function (res) {
+			console.log("Request Error")
+		}
+	})
+
+	let inmap = new inMap.Map({
+		id: "allmap",
+		skin: "Blueness",
+		center: [107.40, 33.42],
+		zoom: {
+			value: 4, 
+			show: true, 
+			max: 10, 
+			min: 4
+		}
+	});
+
+	let dataTest = data.""
+
+	let dataDot = [{"lng":112.95,"lat":28.93,"count":4,"location":"长沙","ip":"118.89.140.118"},
+	{"lng":121.48,"lat":31.22,"count":2,"location":"上海","ip":"211.65.193.23"},
+	{"lng":113.27,"lat":21.13,"count":2,"location":"海南","ip":"192.168.1.1"},
+	{"lng":116.41,"lat":39.91,"count":2,"location":"北京","ip":"202.112.23.167"}];
+	let overlayDot = new inMap.DotOverlay({
+		tooltip: {
+			show: true,
+			formatter: function (params) {
+				return (
+					"<div><div>IP："+params.ip+"</div><div>地点："+params.location+"</div></div>"
+				);
+			},
+			offsets: {
+				top: 15,
+				left: 15
+			},
+			customClass: "auto"
+		},
+		style: {
+			normal: {
+				backgroundColor: "#FF8C00", 
+				size: 5
+			},
+			mouseOver: {
+				backgroundColor: "#fff",
+				borderWidth: 0
+			}
+		},
+		data: dataDot
+	})
+	inmap.add(overlayDot);
+</script>
+</html>
