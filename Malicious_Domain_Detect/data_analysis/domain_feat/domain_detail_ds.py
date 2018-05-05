@@ -2,12 +2,11 @@
 
 import time
 import io
-import sys
-sys.path.append("..")
 import utils.datetime as datetime
 import utils.mysql as mysql
 
 pds = []
+dns_db = mysql(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
 
 def read_data():
 	# 从文件中读取恶意域名信息
@@ -30,12 +29,7 @@ def create_db():
 	    "PRIMARY KEY(domain_id, primary_domain) "
 	    " ) ENGINE=INNODB DEFAULT CHARSET=utf8;")
 
-	try:
-		mysql.cursor.execute(sql)
-		mysql.conn.commit()
-	except Exception as e:
-		mysql.conn.rollback()
-		raise e
+	dns_db.execute(sql)
 
 def init_db():
 	# 初始化对应的域名基本信息（原始数据）
@@ -44,23 +38,14 @@ def init_db():
 			"SELECT domain_id, primary_domain, is_dga, ttl FROM domain_name "
 			"WHERE primary_domain = '%s';" % item)
 		
-		try:
-			mysql.cursor.execute(sql_name)
-			mysql.conn.commit()
-		except Exception as e:
-			mysql.conn.rollback()
-			raise e
+		dns_db.execute(sql_name)
 
 	# 初始化对应的whois信息
 	# sql_whois = ("UPDATE domain_detail as a INNER JOIN domain_whois as b "
 	# 	"on a.primary_domain=b.primary_domain SET "
 	# 	"a.registrar=b.registrar, a.registrant=b.registrant;")
-	# try:
-	# 	mysql.cursor.execute(sql_whois)
-	# 	mysql.conn.commit()
-	# except Exception as e:
-	# 	mysql.conn.rollback()
-	# 	raise e
+	# 
+	# dns_db.execute(sql_whois)
 
 def add_register_length():
 	times = []
@@ -70,8 +55,7 @@ def add_register_length():
 		sql_get = ("SELECT register_date, expire_date FROM domain_whois "
 		"WHERE primary_domain = '%s';") % item
 
-		mysql.cursor.execute(sql_get)
-		rs = mysql.cursor.fetchone()
+		rs = dns_db.query(sql_get, mode=1)
 
 		if rs != None:
 			times.append(list(rs))
@@ -89,12 +73,7 @@ def add_register_length():
 		sql_set = ("UPDATE bad_domain_detail SET register_length = '%s' "
 		"WHERE primary_domain = '%s';") % (time_diff[i], pds[i])
 
-		try:
-			mysql.cursor.execute(sql_set)
-			mysql.conn.commit()
-		except Exception as e:
-			mysql.conn.rollback()
-			raise e
+		dns_db.execute(sql_set)
 
 def add_credit_evidence():
 	ret = []
@@ -103,8 +82,7 @@ def add_credit_evidence():
 	for pd in pds:
 		sql = "SELECT evidence FROM domain_name WHERE primary_domain='%s';" % pd
 
-		mysql.cursor.execute(sql)
-		rs = mysql.cursor.fetchone()
+		rs = dns_db.query(sql, mode=1)
 
 		if rs != None:
 			arr = rs[0].split("\"")[2:]
@@ -123,12 +101,7 @@ def add_credit_evidence():
 		else:
 			sql_update = "UPDATE bad_domain_detail SET credit=%d WHERE primary_domain='%s';" % (item[1], item[0])
 
-		try:
-			mysql.cursor.execute(sql_update)
-			mysql.conn.commit()
-		except Exception as e:
-			mysql.conn.rollback()
-			raise e
+		dns_db.execute(sql_update)
 			
 
 if __name__ == "__main__":
@@ -141,4 +114,4 @@ if __name__ == "__main__":
 	except Exception as e:
 		print(e, time.asctime(time.localtime(time.time())))
 	finally:
-		mysql.conn.close()
+		mysql.close()
