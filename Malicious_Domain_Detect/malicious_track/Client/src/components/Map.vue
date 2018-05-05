@@ -100,10 +100,6 @@
 		},
 
 		mounted () {
-			// let echarts = require("echarts/lib/echarts")
-			// require('echarts/lib/chart/map')
-
-			// let chart = echarts.init(document.getElementById("chart"))
 			var that = this
 			this.$nextTick(() => {
 

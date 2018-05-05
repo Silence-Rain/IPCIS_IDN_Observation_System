@@ -21,22 +21,58 @@
 </body>
 
 <script type="text/javascript">
-	let url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?" + 
-			"IpSets=211.65.193.193:32-211.65.197.210:32-202.112.23.167:32-211.65.192.172:32" + 
-			"&TableName=2018-05-03&Mode=1"
-	var data;
-	$.ajax({
-		type: "GET",
-		url: url,
-		dataType: "json",
-		success: function (res) {
-			data = res;
-		},
-		error: function (res) {
-			console.log("Request Error")
+	//格式化数据构造函数
+	function dataFormatter(lng, lat, ip, location, size, direction) {
+		return {
+			"lng": lng,
+			"lat": lat,
+			"ip": ip,
+			"location": location,
+			"style": {
+				"backgroundColor": (direction == 0) ? "#FF8C00" : "#0F0",
+				"size": size
+			}
 		}
-	})
+	}
 
+	//请求数据
+	var data = [["sss ss"], ["ddd dd"]]
+	// let url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?" + 
+	// 		"IpSets=211.65.193.193:32-211.65.197.210:32-202.112.23.167:32-211.65.192.172:32" + 
+	// 		"&TableName=2018-05-03&Mode=1"
+	// $.ajax({
+	// 	type: "GET",
+	// 	url: url,
+	// 	dataType: "json",
+	// 	success: function (res) {
+	// 		data = res;
+	// 	},
+	// 	error: function (res) {
+	// 		console.log("Request Error")
+	// 	}
+	// })
+
+	//格式化数据
+	let dot = [];
+	for (var i in data) {
+		for (var j in data[i]) {
+			if (j == 0) {
+				continue
+			}
+
+			var temp = data[i][j].split(" ")
+			dot.push(dataFormatter(121.48,31.22,"118.89.140.118","shanghai",4,i))
+			// dot.push(dataFormatter(121.48,31.22,temp[1],temp[31].slice(1, -1),4,i))
+		}
+	}
+
+	let dataDot = [{"lng":112.95,"lat":28.93,"location":"长沙","ip":"118.89.140.118","style":{"backgroundColor":"#FF8C00","size":2}},
+	{"lng":121.48,"lat":31.22,"location":"上海","ip":"211.65.193.23","style":{"backgroundColor":"#0f0","size":2}},
+	{"lng":113.27,"lat":21.13,"location":"海南","ip":"192.168.1.1"},
+	{"lng":116.41,"lat":39.91,"location":"北京","ip":"202.112.23.167"}];
+
+
+	//初始化地图
 	let inmap = new inMap.Map({
 		id: "allmap",
 		skin: "Blueness",
@@ -48,13 +84,6 @@
 			min: 4
 		}
 	});
-
-	let dataTest = data.""
-
-	let dataDot = [{"lng":112.95,"lat":28.93,"count":4,"location":"长沙","ip":"118.89.140.118"},
-	{"lng":121.48,"lat":31.22,"count":2,"location":"上海","ip":"211.65.193.23"},
-	{"lng":113.27,"lat":21.13,"count":2,"location":"海南","ip":"192.168.1.1"},
-	{"lng":116.41,"lat":39.91,"count":2,"location":"北京","ip":"202.112.23.167"}];
 	let overlayDot = new inMap.DotOverlay({
 		tooltip: {
 			show: true,
