@@ -21,8 +21,8 @@
 </body>
 
 <script type="text/javascript">
-	//格式化数据构造函数
-	function dataFormatter(lng, lat, ip, location, size, direction) {
+	//地图数据构造函数
+	function mapData(lng, lat, ip, location, size, direction) {
 		return {
 			"lng": lng,
 			"lat": lat,
@@ -35,81 +35,134 @@
 		}
 	}
 
-	//请求数据
-	var data = [["sss ss"], ["ddd dd"]]
-	// let url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?" + 
-	// 		"IpSets=211.65.193.193:32-211.65.197.210:32-202.112.23.167:32-211.65.192.172:32" + 
-	// 		"&TableName=2018-05-03&Mode=1"
-	// $.ajax({
-	// 	type: "GET",
-	// 	url: url,
-	// 	dataType: "json",
-	// 	success: function (res) {
-	// 		data = res;
-	// 	},
-	// 	error: function (res) {
-	// 		console.log("Request Error")
-	// 	}
-	// })
-
 	//格式化数据
-	let dot = [];
-	for (var i in data) {
-		for (var j in data[i]) {
-			if (j == 0) {
-				continue
-			}
+	function dataFormatter(data) {
+		let res = []
 
-			var temp = data[i][j].split(" ")
-			dot.push(dataFormatter(121.48,31.22,"118.89.140.118","shanghai",4,i))
-			// dot.push(dataFormatter(121.48,31.22,temp[1],temp[31].slice(1, -1),4,i))
+		//取出需要的信息
+		for (var i in data) {
+			for (var j in data[i]) {
+				var temp = data[i][j].split(" ")
+
+				if (j == 0) {
+					if (i == 0) {
+						res.push(mapData(Number(temp[13]),Number(temp[14]),temp[0],"目标IP",10,1))
+						console.log(data[i][j])
+					}
+				}
+				else {
+					res.push(mapData(Number(temp[32]),Number(temp[33]),temp[1],temp[31].slice(1, -1),3,0))
+				}
+			}
 		}
+
+		//统计重复地点，按比例增加散点大小
+		let hash = {}
+		let ret = []
+		for (var item of res) {
+			if (!hash[item.location]) {
+				ret.push(item)
+				hash[item.location] = 1
+			}
+			else {
+				hash[item.location] += 1
+			}
+		}
+		
+		for (var item of ret) {
+			// let offset = 0
+			// switch (Math.ceil(hash[item.location]/3)) {
+			// case 1:
+			// 	offset += 2
+			// case 2:
+			// 	offset += 2
+			// case 3:
+			// 	offset += 2
+			// case 4:
+			// 	offset += 1.5
+			// case 5:
+			// 	offset += 1.5
+			// case 6:
+			// 	offset += 1
+			// case 7:
+			// 	offset += 1
+			// 	break
+			// default:
+			// 	offset = 14
+			// 	break
+			// }
+			// item.style.size += offset
+
+			if (hash[item.location] >= 25) {
+				item.style.size = 18
+			}
+			else {
+				item.style.size += hash[item.location] * 0.4
+			}
+		}
+
+		return ret
 	}
 
-	let dataDot = [{"lng":112.95,"lat":28.93,"location":"长沙","ip":"118.89.140.118","style":{"backgroundColor":"#FF8C00","size":2}},
-	{"lng":121.48,"lat":31.22,"location":"上海","ip":"211.65.193.23","style":{"backgroundColor":"#0f0","size":2}},
-	{"lng":113.27,"lat":21.13,"location":"海南","ip":"192.168.1.1"},
-	{"lng":116.41,"lat":39.91,"location":"北京","ip":"202.112.23.167"}];
-
-
 	//初始化地图
-	let inmap = new inMap.Map({
-		id: "allmap",
-		skin: "Blueness",
-		center: [107.40, 33.42],
-		zoom: {
-			value: 4, 
-			show: true, 
-			max: 10, 
-			min: 4
-		}
-	});
-	let overlayDot = new inMap.DotOverlay({
-		tooltip: {
-			show: true,
-			formatter: function (params) {
-				return (
-					"<div><div>IP："+params.ip+"</div><div>地点："+params.location+"</div></div>"
-				);
-			},
-			offsets: {
-				top: 15,
-				left: 15
-			},
-			customClass: "auto"
-		},
-		style: {
-			normal: {
-				backgroundColor: "#FF8C00", 
-				size: 5
-			},
-			mouseOver: {
-				backgroundColor: "#fff",
-				borderWidth: 0
+	function mapInit(data) {
+		let inmap = new inMap.Map({
+			id: "allmap",
+			skin: "Blueness",
+			center: [107.40, 33.42],
+			zoom: {
+				value: 2, 
+				show: true, 
+				max: 10, 
+				min: 2
 			}
-		},
-		data: dataDot
+		});
+		let overlayDot = new inMap.DotOverlay({
+			tooltip: {
+				show: true,
+				formatter: (params) => {
+					return (
+						"<div><div>IP："+params.ip+"</div><div>地点："+params.location+"</div></div>"
+					);
+				},
+				offsets: {
+					top: 15,
+					left: 15
+				},
+				customClass: "auto"
+			},
+			style: {
+				normal: {
+					backgroundColor: "#fff", 
+					size: 4
+				},
+				mouseOver: {
+					backgroundColor: "#fff",
+					borderWidth: 0
+				}
+			},
+			data: data
+		})
+		inmap.add(overlayDot);
+	}
+
+	$(document).ready(() => {
+		//请求数据
+		let ip = "202.112.23.167:32"
+		let url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?IpSets="+ip+"&TableName=2018-05-03&Mode=1"
+		$.ajax({
+			type: "GET",
+			url: url,
+			dataType: "json",
+			success: (res) => {
+				let dot = dataFormatter(res[ip])
+				mapInit(dot)
+			},
+			error: (res) => {
+				console.log("Request Error")
+			}
+		})
 	})
-	inmap.add(overlayDot);
+	
 </script>
 </html>
