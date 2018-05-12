@@ -1,12 +1,12 @@
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import utils.mysql as mysql
+from utils.mysql import MySQL
 import os  
 import socket
 import struct
 
-dns_db = mysql.db(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
+dns_db = MySQL(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
 file = open('./3mths.txt') 
 
 #获取域名列表

@@ -3,10 +3,10 @@
 import time
 import io
 import utils.datetime as datetime
-import utils.mysql as mysql
+from utils.mysql import MySQL
 
 pds = []
-dns_db = mysql.db(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
+dns_db = MySQL(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
 
 def read_data():
 	# 从文件中读取恶意域名信息
