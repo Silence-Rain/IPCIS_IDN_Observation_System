@@ -14,17 +14,17 @@ class MySQL(object):
 						)
 		self.cursor = self.conn.cursor()
 
-	def query(self, sql, mode=0):
-		self.cursor.execute(sql)
+	async def get(self, sql):
+		await self.cursor.execute(sql)
+		return self.cursor.fetchone()
 
-		if mode == 0:
-			return self.cursor.fetchall()
-		else:
-			return self.cursor.fetchone()
+	async def query(self, sql):
+		await self.cursor.execute(sql)
+		return self.cursor.fetchall()
 
-	def execute(self, sql):
+	async def execute(self, sql):
 		try:
-			self.cursor.execute(sql)
+			await self.cursor.execute(sql)
 			self.conn.commit()
 		except Exception as e:
 			self.conn.rollback()

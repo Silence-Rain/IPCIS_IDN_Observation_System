@@ -3,6 +3,7 @@ import tornado.ioloop
 import tornado.httpserver
 from tornado.options import define, options
 import routes
+from config import *
 from MySQL.mysql import MySQL
 
 define("port", default=8888, help="本地监听端口", type=int)
@@ -11,17 +12,17 @@ define("TEST", default=True, help="测试服务器,支持跨域访问,推送测�
 tornado.options.parse_command_line()
 
 dns_db = MySQL(
-		host="211.65.193.193",
-		user="ipcis",
-		passwd="",
-		port="3307",
-		db="IPCIS_DNS_DB"
+		host=DNS_HOST,
+		user=DNS_USER,
+		passwd=DNS_PASSWD,
+		port=DNS_PORT,
+		db=DNS_DB
 	)
 ipcis_db = MySQL(
-		host="211.65.193.23",
-		user="root",
-		passwd="admin246531",
-		db="known_malicious"
+		host=IPCIS_HOST,
+		user=IPCIS_USER,
+		passwd=IPCIS_PASSWD,
+		db=IPCIS_DB
 	)
 
 application = tornado.web.Application(
