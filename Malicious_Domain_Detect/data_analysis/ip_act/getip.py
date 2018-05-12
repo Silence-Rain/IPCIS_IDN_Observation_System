@@ -6,7 +6,7 @@ import os
 import socket
 import struct
 
-dns_db = mysql(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
+dns_db = mysql.db(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
 file = open('./3mths.txt') 
 
 #获取域名列表
@@ -47,4 +47,4 @@ file.close()
 
 
 #关闭连接
-mysql.close()
+dns_db.close()

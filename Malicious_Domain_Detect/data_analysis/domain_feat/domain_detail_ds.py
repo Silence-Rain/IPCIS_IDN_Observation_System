@@ -6,7 +6,7 @@ import utils.datetime as datetime
 import utils.mysql as mysql
 
 pds = []
-dns_db = mysql(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
+dns_db = mysql.db(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
 
 def read_data():
 	# 从文件中读取恶意域名信息
@@ -114,4 +114,4 @@ if __name__ == "__main__":
 	except Exception as e:
 		print(e, time.asctime(time.localtime(time.time())))
 	finally:
-		mysql.close()
+		dns_db.close()

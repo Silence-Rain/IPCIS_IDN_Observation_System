@@ -2,7 +2,7 @@
 
 import MySQLdb
 
-class MySQL(object):
+class db(object):
 	def __init__(self, host, user, passwd, db, port=3306, charset='utf8'):
 		self.conn = MySQLdb.connect(
 						host = host, 
@@ -12,7 +12,7 @@ class MySQL(object):
 						db = db,
 						charset = charset
 						)
-		self.cursor = conn.cursor()
+		self.cursor = self.conn.cursor()
 
 	def query(self, sql, mode=0):
 		self.cursor.execute(sql)
