@@ -17,17 +17,17 @@ class BaseHandler(RequestHandler):
 		return self.settings["db"][1]
 
 	@property
-    def json_body(self):
-        if not hasattr(self, '_json_body'):
-            if hasattr(self.request, "body"):
-                try:
-                    if not self.request.body:
-                        self._json_body = {}
-                    else:
-                        self._json_body = json.loads(self.request.body.decode('utf-8'))
-                except ValueError:
-                    raise ArgsError("参数不是json格式！")
-        return self._json_body
+	def json_body(self):
+		if not hasattr(self, '_json_body'):
+			if hasattr(self.request, "body"):
+				try:
+					if not self.request.body:
+						self._json_body = {}
+					else:
+						self._json_body = json.loads(self.request.body.decode('utf-8'))
+				except ValueError:
+					raise ArgsError("参数不是json格式！")
+		return self._json_body
 
 	def set_default_headers(self):
 		self.set_header("Access-Control-Allow-Origin", "*")
@@ -49,13 +49,13 @@ class BaseHandler(RequestHandler):
 		self.finish(json.dumps(rs))
 
 	def get_argument(self, name, default=DEFAULT_TYPE, strip=True):
-        if self.json_body:
-            if name in self.json_body:
-                rs = self.json_body[name]
-                return rs
-            elif default is DEFAULT_TYPE:
-                raise MissingArgumentError(name)
-            else:
-                return default
-        else:
-            return super(BaseHandler, self).get_argument(name, default, strip)
+		if self.json_body:
+			if name in self.json_body:
+				rs = self.json_body[name]
+				return rs
+			elif default is DEFAULT_TYPE:
+				raise MissingArgumentError(name)
+			else:
+				return default
+		else:
+			return super(BaseHandler, self).get_argument(name, default, strip)
