@@ -15,120 +15,107 @@
 
 <script>
 	import inMap from "inmap/dist/inmap.min.js"
-	import {MP} from '../js/map.js'
-	import axios from 'axios'
+	import { MP } from '../js/map.js'
 
 	export default {
 		data () {
 			return {
-				inMap: null,
 				acts: [
 				{
-					from: {
-						city: "118.89.140.118",
-						lnglat: [112.95, 28.43]
-					},
-					to: {
-						city: "211.65.193.23",
-						lnglat: [121.48, 31.22]
-					}
+			        lng: 118.8028, 
+			        lat: 32.0647,
+			        ip: "202.112.23.167",
+			        location: "中国-江苏-南京",
+			        count: 25
 				},
 				{
-					from: {
-						city: "118.89.140.118",
-						lnglat: [112.95, 28.43]
-					},
-					to: {
-						city: "192.168.1.1",
-						lnglat: [113.27, 21.13]
-					}
+			        lng: 112.95, 
+			        lat: 28.43,
+			        ip: "118.89.140.118",
+			        location: "中国-湖南-长沙",
+			        count: 12
 				},
 				{
-					from: {
-						city: "202.112.23.167",
-						lnglat: [116.41, 39.91]
-					},
-					to: {
-						city: "118.89.140.118",
-						lnglat: [112.95, 28.43]
-					}
+			        lng: 113.27, 
+			        lat: 21.13,
+			        ip: "192.168.1.1",
+			        location: "中国-江苏-南京",
+			        count: 18
 				}
 				]
 
 			}
 		},
 
-		created () {
-			// let url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?" + 
-			// 		"IpSets=211.65.193.193:32-211.65.197.210:32-202.112.23.167:32-211.65.192.172:32" + 
-			// 		"&TableName=2018-05-03&Mode=1"
-
-			// axios.get(url)
-			// 	.then((response) => {
-			// 		console.log(response);
-			// 	})
-			// 	.catch((response) => {
-			// 		console.log("000");
-			// 	});
-
-			// this.$nextTick(() => {
-			// 	var that = this
-
+		mounted () {
+			// this.$nextTick(function() {
+			// 	let that = this
 			// 	MP().then(BMap => {
-			// 		this.inMap = new inMap.Map({
-			// 			id: "chart",
-			// 			skin: "Blueness",
-			// 			center: [107.40, 33.42],
-			// 			zoom: {
-			// 				value: 4, 
-			// 				show: true, 
-			// 				max: 13, 
-			// 				min: 4
-			// 			},
-			// 		})
-
-			// 		let overlay = new inMap.MoveLineOverlay({
-			// 			data: this.acts
-			// 		});
-
-			// 		console.log(this.inMap)
-
-			// 		this.inMap.add(overlay)
-			// 		console.log(this.inMap)
+			// 		that.mapInit(that.acts)
 			// 	})
 			// })
-		},
-
-		mounted () {
-			var that = this
-			this.$nextTick(() => {
-
-				MP().then(BMap => {
-					that.inMap = new inMap.Map({
-						id: "chart",
-						skin: "Blueness",
-						center: [107.40, 33.42],
-						zoom: {
-							value: 2, 
-							show: true, 
-							max: 10, 
-							min: 2
-						},
-					})
-
-					let overlay = new inMap.MoveLineOverlay({
-						data: that.acts
-					});
-
-					that.inMap.add(overlay)
-					console.log(that.inMap === this.inMap)
-				})
-			})
+			this.mapInit(this.acts)
 		},
 
 		methods: {
 			download () {
 
+			},
+
+			//地图数据构造函数
+			mapData (lng, lat, ip, location, size) {
+				return {
+					lng: lng,
+					lat: lat,
+					ip: ip,
+					location: location,
+					style: {
+						backgroundColor: "#FF8C00",
+						size: (size >= 25) ? 13 : (size * 0.4)
+					}
+				}
+			},
+
+			//初始化地图
+			mapInit (data) {
+				let inmap = new inMap.Map({
+					id: "chart",
+					skin: "Blueness",
+					center: [107.40, 33.42],
+					zoom: {
+						value: 2, 
+						show: true, 
+						max: 10, 
+						min: 2
+					}
+				})
+				let overlay = new inMap.DotOverlay({
+					tooltip: {
+						show: true,
+						formatter: (params) => {
+							return (
+								"<div><div>IP："+params.ip+"</div><div>地点："+params.location+"</div></div>"
+							);
+						},
+						offsets: {
+							top: 15,
+							left: 15
+						},
+						customClass: "auto"
+					},
+					style: {
+						normal: {
+							backgroundColor: "#fff", 
+							size: 4
+						},
+						mouseOver: {
+							backgroundColor: "#fff",
+							borderWidth: 0
+						}
+					},
+					data: data
+				})
+				inmap.add(overlay)
 			}
 		}
 	}
@@ -148,5 +135,11 @@
 	height: 30px;
 	margin-left: 50px;
 	font-size: 12px;
+}
+.auto{
+	background-color: #778899;
+	border: 0;
+	border-radius: 5px;
+	color: #fff;
 }
 </style>

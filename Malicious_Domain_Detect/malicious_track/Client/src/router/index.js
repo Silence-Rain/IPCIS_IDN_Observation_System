@@ -12,32 +12,30 @@ export default new Router({
   routes: [
     {
     	path: '/',
-    	name: "Map",
-    	component: Map
-    	// name: 'Index',
-    	// component: Index,
-    	// children:[
-    	// 	{
-		   //  	path: "/Info",
-		   //  	name: "Info",
-		   //  	component: Info
-		   //  },
-		   //  {
-		   //  	path: "/Trend",
-		   //  	name: "Trend",
-		   //  	component: Trend
-		   //  },
-		   //  {
-		   //  	path: "/Map",
-		   //  	name: "Map",
-		   //  	component: Map
-		   //  },
-		   //  {
-		   //  	path: "/Relation",
-		   //  	name: "Relation",
-		   //  	component: Relation
-		   //  }
-    	// ]
+    	name: 'Index',
+    	component: Index,
+    	children:[
+    		{
+		    	path: "/Info",
+		    	name: "Info",
+		    	component: Info
+		    },
+		    {
+		    	path: "/Trend",
+		    	name: "Trend",
+		    	component: Trend
+		    },
+		    {
+		    	path: "/Map",
+		    	name: "Map",
+		    	component: Map
+		    },
+		    {
+		    	path: "/Relation",
+		    	name: "Relation",
+		    	component: Relation
+		    }
+    	]
     }
   ]
 })

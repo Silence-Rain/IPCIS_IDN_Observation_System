@@ -32,13 +32,13 @@
                                         实时动态
                                     </template>
                                     <MenuItem name="1">
-                                        流量趋势
+                                        IP地址通信活动关系
                                     </MenuItem>
                                     <MenuItem name="2">
-                                        地理位置分布
+                                        域名活跃度
                                     </MenuItem>
                                     <MenuItem name="3">
-                                        通信对象
+                                        地理位置分布
                                     </MenuItem>
                                 </Submenu>
                             </Menu>
@@ -63,10 +63,10 @@
             return {
                 targetDomain: "test.com",
                 pages: [
-                ["概览", "Info"], 
-                ["流量趋势", "Trend"], 
-                ["地理位置分布", "Map"], 
-                ["通信对象", "Relation"]
+                    ["概览", "Info"], 
+                    ["IP地址通信活动关系", "Relation"],
+                    ["域名活跃度", "Trend"], 
+                    ["地理位置分布", "Map"]
                 ],
                 curPage: 0,
             }
