@@ -26,6 +26,6 @@ class TopoMaxHandler(BaseHandler):
 		self.finish_success(result=res)
 
 routes.handlers += [
-	(r'/topo/steady', TopoSteadyHandler)
+	(r'/topo/steady', TopoSteadyHandler),
 	(r'/topo/max', TopoMaxHandler)
 ]

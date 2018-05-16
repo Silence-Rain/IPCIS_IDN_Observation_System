@@ -1,8 +1,8 @@
-from models.info import InfoModel
-from models.topo import TopoModel
-from models.location import LocationModel
-from models.active import ActiveModel
-from models.service import ServiceModel
+from .models.info import InfoModel
+from .models.topo import TopoModel
+from .models.location import LocationModel
+from .models.active import ActiveModel
+from .models.service import ServiceModel
 
 class Database(object):
 	def __init__(self, ipcis, dns):

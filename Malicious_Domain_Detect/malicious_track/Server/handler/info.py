@@ -8,7 +8,7 @@ from utils.enrich import *
 class InfoHandler(BaseHandler):
 
 	async def post(self):
-		domain = self.get_argument("domain_name")
+		domain = str(self.get_argument("domain_name"))
 		pd = self.db.info.get_primary_domain(domain)
 
 		# 表中已有记录

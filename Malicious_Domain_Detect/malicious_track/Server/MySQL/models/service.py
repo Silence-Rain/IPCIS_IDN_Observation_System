@@ -4,5 +4,5 @@ class ServiceModel(object):
 	def __init__(self, ipcis):
 		self.ipcis = ipcis
 
-	async def get_raw_data(domain):
+	async def get_raw_data(self, domain):
 		pass

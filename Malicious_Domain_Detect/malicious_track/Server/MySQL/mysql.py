@@ -1,6 +1,9 @@
 #!coding=utf8
 
-import MySQLdb
+try:
+	import MySQLdb
+except ImportError:
+	import pymysql as MySQLdb
 
 class MySQL(object):
 	def __init__(self, host, user, passwd, db, port=3306, charset='utf8'):
@@ -15,16 +18,16 @@ class MySQL(object):
 		self.cursor = self.conn.cursor()
 
 	async def get(self, sql):
-		await self.cursor.execute(sql)
+		self.cursor.execute(sql)
 		return self.cursor.fetchone()
 
 	async def query(self, sql):
-		await self.cursor.execute(sql)
+		self.cursor.execute(sql)
 		return self.cursor.fetchall()
 
 	async def execute(self, sql):
 		try:
-			await self.cursor.execute(sql)
+			self.cursor.execute(sql)
 			self.conn.commit()
 		except Exception as e:
 			self.conn.rollback()

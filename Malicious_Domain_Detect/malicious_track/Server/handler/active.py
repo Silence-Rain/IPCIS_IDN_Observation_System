@@ -5,7 +5,7 @@ from handler.exceptions import *
 import routes
 from utils.active import *
 
-class LocationHandler(BaseHandler):
+class ActiveHandler(BaseHandler):
 
 	async def get(self):
 		domain = self.request.headers["domain_name"]

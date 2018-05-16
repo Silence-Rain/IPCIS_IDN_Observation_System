@@ -48,13 +48,13 @@
 		},
 
 		mounted () {
-			// this.$nextTick(function() {
-			// 	let that = this
-			// 	MP().then(BMap => {
-			// 		that.mapInit(that.acts)
-			// 	})
-			// })
-			this.mapInit(this.acts)
+			this.$nextTick(function() {
+				let that = this
+				MP().then(BMap => {
+					that.mapInit(that.acts)
+				})
+			})
+			//this.mapInit(this.acts)
 		},
 
 		methods: {

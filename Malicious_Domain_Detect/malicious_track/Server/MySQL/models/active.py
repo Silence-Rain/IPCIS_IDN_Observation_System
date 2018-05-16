@@ -4,12 +4,12 @@ class ActiveModel(object):
 	def __init__(self, ipcis):
 		self.ipcis = ipcis
 
-	async def get_ip_and_count(domain):
+	async def get_ip_and_count(self, domain):
 		rs = await self.db.ipcis.query(
 			"SELECT ip_1,ip_activity FROM domain2ip WHERE domain_name='%s';" % domain)
 		return list(rs)
 
-	async def get_raw_data(ips):
+	async def get_raw_data(self, ips):
 		ret = []
 		for ip in ips:
 			temp = {"ip": ip[0], "count": ip[1]}

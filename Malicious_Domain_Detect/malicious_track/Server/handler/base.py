@@ -17,6 +17,10 @@ class BaseHandler(RequestHandler):
 		return self.settings["db"][1]
 
 	@property
+	def db(self):
+		return self.settings["db"]
+
+	@property
 	def json_body(self):
 		if not hasattr(self, '_json_body'):
 			if hasattr(self.request, "body"):
