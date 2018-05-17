@@ -4,16 +4,14 @@ class TopoModel(object):
 	def __init__(self, ipcis):
 		self.ipcis = ipcis
 
-	def formatter(self, raw_tup, label_list):
-		ret = {}
-		for index, label in enumerate(label_list):
-			ret[label] = raw_tup[index]
-		return ret
-
 	async def get_ip(self, domain):
+		ret = []
 		ips = await self.db.ipcis.query(
 			"SELECT ip_1 FROM domain2ip WHERE domain_name='%s';" % domain)
-		return list(ips)
+		for ip in ips:
+			ret.append(ip[0])
+
+		return ret
 
 	async def get_ip_activities(self, ips):
 		ret = []
@@ -21,6 +19,6 @@ class TopoModel(object):
 			rs = await self.ipcis.query(
 				"SELECT ip_1,ip_2,count FROM ip_activity_record WHERE ip_1=%s" % ip)
 			for item in rs:
-				ret.append(item)
+				ret.append(list(item))
 
 		return ret

@@ -5,14 +5,21 @@ class InfoModel(object):
 		self.ipcis = ipcis
 		self.dns = dns
 
-	def formatter(self, raw_tup, label_list):
+	def basic_formatter(self, raw, labels):
 		ret = {}
-		for index, label in enumerate(label_list):
-			ret[label] = raw_tup[index]
+		for index, label in enumerate(labels):
+			ret[label] = raw[index]
 		return ret
 
+	def ip_formatter(self, raw,):
+		ret = {"ip":[], "location":[], "count":[]}
+		for item in raw:
+			ret["ip"].append(item[0])
+			ret["location"].append(item[1])
+			ret["count"].append(item[2])
+
 	async def get_primary_domain(self, domain):
-		ret = await self.db.ipcis.get(
+		ret = await self.ipcis.get(
 			"SELECT primary_domain FROM primary2name WHERE domain_name='%s';" % domain)
 
 		if len(ret) != 0:
@@ -26,12 +33,12 @@ class InfoModel(object):
 		rs_whois = await self.dns.get(
 			"SELECT registrar,registrant,address,email,register_date,expire_date FROM domain_whois WHERE primary_domain='%s';" % pd)
 		rs_ip = await self.ipcis.query(
-			"SELECT ip_1,ip_location,ip_activity FROM domain2ip WHERE domain_name='%s'" % domain)
+			"SELECT ip_1,ip_1_location,ip_activity FROM domain2ip WHERE domain_name='%s'" % domain)
 
 		ret = {}
 		ret["domain_name"] = domain
-		ret["static"] = self.formatter(rs_static, ["is_dga","ttl","credit"])
-		ret["whois"] = self.formatter(rs_whois, ["registrar","registrant","address","email","register_date","expire_date"])
-		ret["ip"] = self.formatter(list(rs_ip), ["ip","location","count"])
+		ret["static"] = self.basic_formatter(rs_static, ["is_dga","ttl","credit"])
+		ret["whois"] = self.basic_formatter(rs_whois, ["registrar","registrant","address","email","register_date","expire_date"])
+		ret["ip"] = self.ip_formatter(rs_ip)
 
 		return ret

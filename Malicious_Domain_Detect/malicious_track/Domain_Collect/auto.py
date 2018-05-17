@@ -139,6 +139,68 @@ def primary2name(msqlink1,msqlink2,domain):
 	sql=("INSERT INTO primary2name (domain_id,primary_domain,domain_name) values('%s','%s','%s')")%(domain_id[0],primary_domain[0],domain)
 	msqlink1.execute(sql)
 
+
+# 添加domain_static表的is_dga,ttl字段
+def add_static(msqlink1,msqlink2,domain):
+	sql = ("SELECT primary_domain, is_dga, ttl FROM domain_name "
+			"WHERE primary_domain = '%s';" % domain)
+	rs = msqlink2.query(sql)
+
+	for item in rs:
+		sql1 = ("INSERT INTO domain_static (primary_domain, is_dga, ttl) "
+				"VALUES (%s, %s, %s)" % item)
+		msqlink1.execute(sql)
+
+
+# 添加domain_static表的register_year字段
+def add_register_years(msqlink1,msqlink2,domain):
+	times = ()
+	time_diff = ""
+	sql_get = ("SELECT register_date, expire_date FROM domain_whois "
+	"WHERE primary_domain = '%s';") % item
+	rs = msqlink2.get(sql_get)
+	if rs != None:
+		times = rs
+
+	try:	
+		temp = datetime.standard2timestamp(item[1]) - datetime.standard2timestamp(item[0])
+		time_diff = datetime.timestamp2diff(temp)
+	except:
+		pass
+
+	for i in range(0, len(pds)):
+		sql_set = ("UPDATE domain_static SET register_years = '%s' "
+		"WHERE primary_domain = '%s';") % (time_diff, domain)
+		msqlink1.execute(sql_set)
+
+# 添加domain_static表的credit字段
+def add_credit(msqlink1,msqlink2,domain):
+	ret = None
+	scoreDict = {"safe": 100, "unsure": 70}
+	sql = "SELECT evidence FROM domain_name WHERE primary_domain='%s';" % pd
+	rs = msqlink2.get(sql)
+	if rs != None:
+		arr = rs.split("\"")[2:]
+		temp = None
+		for item in arr:
+			if item == "safe" or item == "unsure":
+				temp = scoreDict[item]
+		ret = temp
+
+	if ret == None:
+		sql_update = "UPDATE domain_static SET credit=NULL WHERE primary_domain='%s';" % domain
+	else:
+		sql_update = "UPDATE domain_static SET credit=%d WHERE primary_domain='%s';" % (ret, domain)
+
+	msqlink1.execute(sql_update)
+
+
+def domain_static(msqlink1,msqlink2,domain):
+	add_static(msqlink1,msqlink2,domain)
+	add_register_years(msqlink1,msqlink2,domain)
+	add_credit(msqlink1,msqlink2,domain)
+
+
 def newip(addr):
 	#建立数据库连接
 	known_m = db(host="211.65.193.23", user="root", passwd="admin246531",  db="known_malicious",port=3306)
@@ -149,6 +211,9 @@ def newip(addr):
 
 	#遍历字典
 	for domaindata,ipdata in domain2ip_contact.items(): 	
+
+		# 填入域名静态信息
+		domain_static(known_m,dns_db,domaindata)
 	
 		#填入域名IP记录
 		domain2ip(known_m,domaindata,ipdata[0])	

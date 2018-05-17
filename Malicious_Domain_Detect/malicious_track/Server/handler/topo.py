@@ -9,8 +9,8 @@ class TopoSteadyHandler(BaseHandler):
 
 	async def get(self):
 		domain = self.request.headers["domain_name"]
-		ips = self.db.topo.get_ip(domain)
-		acts = self.db.topo.get_ip_activities(ips)
+		ips = await self.db.topo.get_ip(domain)
+		acts = await self.db.topo.get_ip_activities(ips)
 		res = steady_topo(acts)
 
 		self.finish_success(result=res)
@@ -19,8 +19,8 @@ class TopoMaxHandler(BaseHandler):
 
 	async def get(self):
 		domain = self.request.headers["domain_name"]
-		ips = self.db.topo.get_ip(domain)
-		acts = self.db.topo.get_ip_activities(ips)
+		ips = await self.db.topo.get_ip(domain)
+		acts = await self.db.topo.get_ip_activities(ips)
 		res = max_topo(acts)
 		
 		self.finish_success(result=res)

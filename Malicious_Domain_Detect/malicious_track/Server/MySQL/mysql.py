@@ -1,13 +1,10 @@
 #!coding=utf8
 
-try:
-	import MySQLdb
-except ImportError:
-	import pymysql as MySQLdb
+import pymysql
 
 class MySQL(object):
 	def __init__(self, host, user, passwd, db, port=3306, charset='utf8'):
-		self.conn = MySQLdb.connect(
+		self.conn = pymysql.connect(
 						host = host, 
 						port = port, 
 						user = user,
