@@ -11,7 +11,6 @@ class ServiceHandler(BaseHandler):
 		domain = self.request.headers["domain_name"]
 		raw = await self.db.service.get_raw_data(domain)
 		res = service_type(raw)
-
 		self.finish_success(result=res)
 
 
