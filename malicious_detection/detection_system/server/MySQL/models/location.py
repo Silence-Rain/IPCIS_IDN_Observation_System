@@ -7,19 +7,19 @@ class LocationModel(object):
 	def formatter(self, raw):
 		ret = {}
 		temp = raw[2].split(",")
-		ret["lng"] = int(temp[0])
-		ret["lat"] = int(temp[1])
+		ret["lng"] = float(temp[0])
+		ret["lat"] = float(temp[1])
 		ret["ip"] = raw[0]
 		ret["location"] = raw[1]
-		ret["count"] = int(raw[3])
+		ret["count"] = eval(raw[3])
 
 		return ret
 
 	async def get_location(self, domain):
-		rs = await self.db.ipcis.query(
+		rs = await self.ipcis.query(
 			"SELECT ip_1,ip_1_location,ip_1_lnglat,ip_activity FROM domain2ip WHERE domain_name='%s';" % domain)
 		ret = []
 		for item in rs:
-			ret.append(formatter(item))
+			ret.append(self.formatter(item))
 
 		return ret

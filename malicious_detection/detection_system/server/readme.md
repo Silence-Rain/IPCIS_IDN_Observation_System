@@ -86,7 +86,7 @@
 
   ```json
   result: {
-      "node": [
+      "nodes": [
           {
               "id": 0,
               "name": "118.89.140.118",
@@ -143,7 +143,7 @@
 
   ```json
   result: {
-      "node": [
+      "nodes": [
           {
               "id": 0,
               "name": "118.89.140.118",

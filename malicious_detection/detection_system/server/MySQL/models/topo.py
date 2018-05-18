@@ -6,7 +6,7 @@ class TopoModel(object):
 
 	async def get_ip(self, domain):
 		ret = []
-		ips = await self.db.ipcis.query(
+		ips = await self.ipcis.query(
 			"SELECT ip_1 FROM domain2ip WHERE domain_name='%s';" % domain)
 		for ip in ips:
 			ret.append(ip[0])
@@ -17,7 +17,7 @@ class TopoModel(object):
 		ret = []
 		for ip in ips:
 			rs = await self.ipcis.query(
-				"SELECT ip_1,ip_2,count FROM ip_activity_record WHERE ip_1=%s" % ip)
+				"SELECT ip_1,ip_2,count,date FROM ip_activity_record WHERE ip_1=%s" % ip)
 			for item in rs:
 				ret.append(list(item))
 
