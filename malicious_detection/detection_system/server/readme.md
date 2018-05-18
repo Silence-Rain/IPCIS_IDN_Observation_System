@@ -15,9 +15,9 @@
 
 #### API
 
-##### info - 获取域名基本信息
+##### info - 获取域名基本信息（本地数据库中）
 
-- url：`/info`
+- url：`/info/local`
 
 - method：`POST`
 
@@ -42,6 +42,43 @@
           "ttl": 86400,
           "credit": 70,
       },
+      "ip": {
+          "ip": ["118.89.140.118","45.77.86.38"],
+          "location": ["中国-上海-上海", "美国-CA-洛杉矶"],
+          "count": [100, 50]
+      }
+  }
+  ```
+
+- Error 4xx：
+
+  | 字段   | 类型   | 描述       |
+  | ------ | ------ | ---------- |
+  | status | String | "err"      |
+  | result | String | 错误的原因 |
+
+##### info - 获取域名whois信息（DNS数据库中）
+
+- url：`/info/remote`
+
+- method：`POST`
+
+- 参数：
+
+  | 字段        | 类型   | 描述         |
+  | ----------- | ------ | ------------ |
+  | domain_name | String | 要查询的域名 |
+
+- Success 200:
+
+  | 字段   | 类型   | 描述               |
+  | ------ | ------ | ------------------ |
+  | status | String | "success"          |
+  | result | Object | 查询域名的基本信息 |
+
+  ```json
+  result: {
+      "domain_name": "www.test.com",
       "whois": {
           "registrar": "注册人",
           "registrant": "注册机构",
@@ -49,11 +86,6 @@
           "email": "test@email.com",
           "register_date": "17-jun-2005",
           "expire_date": "17-jun-2020"
-      },
-      "ip": {
-          "ip": ["118.89.140.118","45.77.86.38"],
-          "location": ["中国-上海-上海", "美国-CA-洛杉矶"],
-          "count": [100, 50]
       }
   }
   ```
@@ -203,7 +235,7 @@
           "lat": 32.0647,
           "ip": "202.112.23.167",
           "location": "中国-江苏-南京",
-          "count": 25
+          "count": [25,50...]
   	}
       ...
   ]
