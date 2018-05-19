@@ -1,3 +1,16 @@
+# 格式化数据
+# 输入：[{
+#		"ip": ip, 
+# 		"count": [counts], 
+# 		"opposite_ip": {date: [ips], ...}, 
+# 		"ip_geo": {date: [lnglats], ...}
+# 		}, ...]
+# 输出：[{
+#		"ip": ip, 
+# 		"count": [counts], 
+# 		"opposite_ip_count": [ip_counts], 
+# 		"ip_geo": [entropys]
+# 		}, ...]
 def formatter(data):
 	ret = []
 	for item in data:
@@ -14,6 +27,7 @@ def formatter(data):
 
 	return ret
 
+# 在原始数据上添加active字段
 def active_degree(data):
 	res = formatter(data)
 	ret = []
@@ -24,8 +38,10 @@ def active_degree(data):
 
 	return ret
 
+# 计算域名活跃度
 def active_calc(item):
 	return 60
 
+# 计算ip地理分布香农熵
 def shannon_entropy(geos):
 	return len(geos)
