@@ -10,6 +10,9 @@ def raw2date_dict(data):
 
 	return dict(zip(keys, values))
 
+def raw2count(data):
+	ret = {}
+
 def node_constructor(nodes):
 	ret = []
 	for index, item in enumerate(nodes):
