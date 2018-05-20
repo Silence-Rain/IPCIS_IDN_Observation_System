@@ -13,11 +13,13 @@ class InfoModel(object):
 		return ret
 
 	def ip_formatter(self, raw):
-		ret = {"ip":[], "location":[], "count":[]}
+		ret = []
 		for item in raw:
-			ret["ip"].append(item[0])
-			ret["location"].append(item[1])
-			ret["count"].append(eval(item[2]))
+			temp = {"ip":"", "location":"", "count":[]}
+			temp["ip"] = item[0]
+			temp["location"] = item[1]
+			temp["count"] = eval(item[2])
+			ret.append(temp)
 
 		return ret
 
@@ -25,7 +27,7 @@ class InfoModel(object):
 		ret = await self.ipcis.get(
 			"SELECT primary_domain FROM primary2name WHERE domain_name='%s';" % domain)
 
-		if len(ret) != 0:
+		if ret != None:
 			return ret[0]
 		else:
 			return None

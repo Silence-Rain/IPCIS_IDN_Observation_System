@@ -24,7 +24,7 @@
 						 <Input class="searchbar" v-model="targetDomain" icon="search" placeholder="搜索"></Input>
 					</div>
 					<Table style="margin:20px 0" stripe :loading="isLoading" :columns="tableHeader" :data="list" @on-row-click="redirectTo"></Table>
-					<Page style="margin:20px" :total="length" :current="curPage" :page-size="20" show-total @on-change="changePage"></Page>
+					<Page style="float:right;margin:10px;" :total="length" :current="curPage" :page-size="20" show-total @on-change="changePage"></Page>
 
 					<Modal v-model="showAddModal" title="添加恶意域名" @on-ok="addDomain">
 				        <Input v-model="newDomain" placeholder="请输入完整域名"></Input>
@@ -170,7 +170,7 @@
 	margin: -5px 0;
 }
 .content{
-	padding: 0 40px;
+	padding: 0 100px;
 	min-height: 280px;
 	background: #fff;
 }

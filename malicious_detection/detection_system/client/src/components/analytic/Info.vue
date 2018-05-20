@@ -1,11 +1,13 @@
 <template>
 	<div>
 		<div class="label">域名基本信息</div>
-	    <Table stripe :loading="isLoading" :columns="staticCol" :data="staticInfo"></Table>
-	    <div class="label">域名归属信息</div>
-	    <Table stripe :loading="isLoading" :columns="whoisCol" :data="whoisInfo"></Table>
+	    <Table stripe :loading="localLoading" :columns="staticCol" :data="staticInfo"></Table>
+	    <hr color="#f5f7f9"/>
 	    <div class="label">域名解析IP信息</div>
-	    <Table stripe :loading="isLoading" :columns="ipCol" :data="ipInfo"></Table>
+	    <Table stripe :loading="localLoading" :columns="ipCol" :data="ipInfo"></Table>
+	    <hr color="#f5f7f9"/>
+	    <div class="label">域名归属信息</div>
+	    <Table stripe :loading="remoteLoading" :columns="whoisCol" :data="whoisInfo"></Table>
 	</div>
 </template>
 
@@ -13,7 +15,9 @@
 	export default {
 		data () {
 			return {
-				isLoading: false,
+				targetDomain: "ns2.hostkey.com",
+				localLoading: false,
+				remoteLoading: false,
 	            staticCol: [
 	                {
 	                    title: "是否DGA",
@@ -26,13 +30,6 @@
 	                {
 	                    title: "信誉分数",
 	                    key: "credit"
-	                }
-	            ],
-	            staticInfo: [
-	                {
-	                    is_dga: true,
-	                    ttl: 86400,
-	                    credit: 70
 	                }
 	            ],
 	            whoisCol: [
@@ -61,16 +58,6 @@
 	                    key: "expire_date"
 	                }
 	            ],
-	            whoisInfo: [
-	                {
-						registrar: "莫少煌",
-						registrant: "东南大学",
-						address: "江苏省南京市东南大学九龙湖校区",
-						email: "test@email.com",
-						register_date: "17-jun-2005",
-						expire_date: "17-jun-2020"
-					}
-	            ],
 	            ipCol: [
 	                {
 	                    title: "解析IP地址",
@@ -84,32 +71,45 @@
 	                    title: "IP活动量",
 	                    key: "count"
 	                }
-	            ],
-	            ipInfo: [
-	                {
-	                    ip: "118.89.140.118",
-	                    location: "中国-上海-上海",
-	                    count: 150
-	                }
 	            ]
 	        }
 		},
 
 		mounted () {
-			// this.axios.post("https://118.89.140.118:8888/info", {domain_name: this.name})
-			// 	.then((response) => {
-			// 		this.staticInfo = response.static
-			// 		this.whoisInfo = response.whois
-			// 		this.ipInfo = response.ip
-			// 	})
-			// 	.catch((response) => {
-			// 		alert("加载错误，请稍后再试！")
-			// 	})
+			// this.targetDomain = this.$route.params.domain_name
+			this.localLoading = true
+			this.remoteLoading = true
+
+			this.axios.post("http://118.89.140.118:8888/info/local", 
+				JSON.stringify({domain_name: this.targetDomain}))
+				.then((response) => {
+					this.localLoading = false
+					this.staticInfo = [response.data.result.static]
+					this.ipInfo = response.data.result.ip
+				})
+				.catch((response) => {
+					this.localLoading = false
+					this.$Message.error("对方不想说话，所以等会再试吧");
+				})
+			this.axios.post("http://118.89.140.118:8888/info/remote", 
+				JSON.stringify({domain_name: this.targetDomain}))
+				.then((response) => {
+					this.remoteLoading = false
+					this.whoisInfo = [response.data.result.whois]
+				})
+				.catch((response) => {
+					this.remoteLoading = false
+					this.$Message.error("对方不想说话，所以等会再试吧");
+				})
 		}
 	}
 </script>
 
 <style scoped>
+hr{
+	margin: 10px 0;
+	background-color: #f5f7f9;
+}
 .label{
     margin: 10px;
     font-size: 16px;

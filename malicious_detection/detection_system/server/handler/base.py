@@ -34,7 +34,7 @@ class BaseHandler(RequestHandler):
 		return self._json_body
 
 	def set_default_headers(self):
-		self.set_header("Access-Control-Allow-Origin", "121.237.*.*")
+		self.set_header("Access-Control-Allow-Origin", "*")
 		self.set_header("Access-Control-Allow-Headers", "Access-Token, Content-Type")
 		self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 

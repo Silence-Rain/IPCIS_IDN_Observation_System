@@ -14,38 +14,39 @@
                 </Menu>
             </Header>
 
-            <Layout style="padding: 0 50px;">              
-                <Breadcrumb class="current-target">
-                    <BreadcrumbItem>{{targetDomain}}</BreadcrumbItem>
-                    <BreadcrumbItem>{{pages[curPage][0]}}</BreadcrumbItem>
-                </Breadcrumb>
+            <Layout>
+                <!-- 侧边栏 -->
+                <Sider hide-trigger style="background:#fff;">
+                    <Menu active-name="0" theme="light" width="auto" @on-select="route">
+                        <MenuItem name="0">
+                            <Icon type="ios-information"></Icon>
+                            概览
+                        </MenuItem>
+                        <Submenu name="-1">
+                            <template slot="title">
+                                <Icon type="ios-albums"></Icon>
+                                实时动态
+                            </template>
+                            <MenuItem name="1">
+                                IP地址通信活动关系
+                            </MenuItem>
+                            <MenuItem name="2">
+                                域名活跃度
+                            </MenuItem>
+                            <MenuItem name="3">
+                                地理位置分布
+                            </MenuItem>
+                        </Submenu>
+                    </Menu>
+                </Sider>
+
+                
                 <Content class="content">
                     <Layout>
-                        <!-- 侧边栏 -->
-                        <Sider hide-trigger style="background:#fff;">
-                            <Menu active-name="0" theme="light" width="auto" @on-select="route">
-                                <MenuItem name="0">
-                                    <Icon type="ios-information"></Icon>
-                                    概览
-                                </MenuItem>
-                                <Submenu name="-1">
-                                    <template slot="title">
-                                        <Icon type="ios-albums"></Icon>
-                                        实时动态
-                                    </template>
-                                    <MenuItem name="1">
-                                        IP地址通信活动关系
-                                    </MenuItem>
-                                    <MenuItem name="2">
-                                        域名活跃度
-                                    </MenuItem>
-                                    <MenuItem name="3">
-                                        地理位置分布
-                                    </MenuItem>
-                                </Submenu>
-                            </Menu>
-                        </Sider>
-
+                        <Breadcrumb class="current-target">
+                            <BreadcrumbItem>{{targetDomain}}</BreadcrumbItem>
+                            <BreadcrumbItem>{{pages[curPage][0]}}</BreadcrumbItem>
+                        </Breadcrumb>
                         <!-- 页面主体部分 -->
                         <Content class="content">
                             <router-view/>
@@ -53,7 +54,11 @@
                     </Layout>
                 </Content>
             </Layout>
-            <Footer class="layout-footer-center">2018 &copy; Silence-Rain</Footer>
+            <Footer class="footer">
+                <div>
+                    2018 &copy; Silence-Rain<span>联系方式：daniel.s.mo503@gmail.com</span>
+                </div>
+            </Footer>
         </Layout>
     </div>
 </div>
@@ -63,7 +68,7 @@
     export default {
         data () {
             return {
-                targetDomain: "test.com",
+                targetDomain: "ns2.hostkey.com",
                 pages: [
                     ["概览", "Info"], 
                     ["IP地址通信活动关系", "Relation"],
@@ -76,13 +81,17 @@
 
         mounted () {
             this.targetDomain = this.$route.params.domain_name
+            this.route(0)
         },
 
         methods: {
             route (name) {
                 if (name >= 0) {
                     this.curPage = name
-                    this.$router.push(this.pages[this.curPage][1])
+                    this.$router.push({
+                        name: this.pages[this.curPage][1],
+                        params: {"domain_name": this.targetDomain}
+                    })
                 }
             }
         }
@@ -91,9 +100,11 @@
 
 <style scoped>
 .current-target{
-    margin: 15px;
+    padding: 15px;
     font-size: 18px;
     font-weight: bold;
+    background: #fff;
+    border-bottom: 1px solid #f5f7f9;
 }
 .layout{
     border: 1px solid #d7dde4;
@@ -130,11 +141,15 @@
     margin-right: 20px;
 }
 .content{
-    padding: 10px;
+    padding: 10px 20px 20px 20px;
     min-height: 280px;
     background: #fff;
 }
-.layout-footer-center{
+.footer{
     text-align: center;
+}
+.footer div span{
+    font-size: 12px;
+    margin: 0 20px;
 }
 </style>
