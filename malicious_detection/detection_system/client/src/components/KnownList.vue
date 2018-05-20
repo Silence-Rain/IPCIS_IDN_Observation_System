@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="layout">
 		<Layout>
 			<!-- 顶部导航栏 -->
 			<Header>
@@ -24,7 +24,7 @@
 						 <Input class="searchbar" v-model="targetDomain" icon="search" placeholder="搜索"></Input>
 					</div>
 					<Table style="margin:20px 0" stripe :loading="isLoading" :columns="tableHeader" :data="list" @on-row-click="redirectTo"></Table>
-					<Page style="margin:20px 0" :total="length" :current="curPage" :page-size="20" show-total @on-change="changePage"></Page>
+					<Page style="margin:20px" :total="length" :current="curPage" :page-size="20" show-total @on-change="changePage"></Page>
 
 					<Modal v-model="showAddModal" title="添加恶意域名" @on-ok="addDomain">
 				        <Input v-model="newDomain" placeholder="请输入完整域名"></Input>
@@ -63,18 +63,7 @@
 						key: "service"
 					}
 				],
-				rawList: [
-					{
-						domain_name: "ns2.hostkey.com",
-						active: 60,
-						service: null
-					},
-					{
-						domain_name: "ns1.hostkey.com",
-						active: 60,
-						service: null
-					}
-				]
+				rawList: []
 			}
 		},
 		computed: {
@@ -94,7 +83,7 @@
 					}
 					this.curPage = 1
 					if (ret.length == 0) {
-						return [{domain_name: "未查询到结果"}]
+						return [this.formatter("未查询到结果")]
 					}
 					else {
 						return ret.slice((this.curPage - 1) * 20, this.curPage * 20)
@@ -102,9 +91,31 @@
 				}
 			}
 		},
+		mounted () {
+			this.axios.get("http://211.65.193.23:8888/list")
+				.then((response) => {
+					for (var item of response.data.result) {
+						this.rawList.push(this.formatter(item))
+					}
+				})
+				.catch((response) => {
+					this.$Message.error("对方不想说话，所以等会再试吧");
+				})
+		},
 		methods: {
 			redirectTo (data, index) {
-				console.log(data, index)
+				this.$router.push({
+					name: "Analytic", 
+					params: {"domain_name": this.rawList[index].domain_name}
+				})
+			},
+
+			formatter (domain, active = null, service = null) {
+				return {
+					"domain_name": domain,
+					"active": active,
+					"service": service
+				}
 			},
 
 			regMatch (src, dst) {
@@ -121,7 +132,7 @@
 			},
 
 			addDomain () {
-				this.rawList.push({domain_name: this.newDomain})
+				this.rawList.push(this.formatter(this.newDomain))
 				//TODO: 此时开始自动化富化信息
 			}
 		}
@@ -129,6 +140,13 @@
 </script>
 
 <style scoped>
+.layout{
+    border: 1px solid #d7dde4;
+    background: #f5f7f9;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+}
 .nav-head{
 	display: flex;
 	flex-direction: row;

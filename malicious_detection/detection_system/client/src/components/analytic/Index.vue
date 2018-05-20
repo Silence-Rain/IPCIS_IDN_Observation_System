@@ -74,6 +74,10 @@
             }
         },
 
+        mounted () {
+            this.targetDomain = this.$route.params.domain_name
+        },
+
         methods: {
             route (name) {
                 if (name >= 0) {
