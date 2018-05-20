@@ -3,6 +3,7 @@ from .models.topo import TopoModel
 from .models.location import LocationModel
 from .models.active import ActiveModel
 from .models.service import ServiceModel
+from .models.domain_list import DomainListModel
 
 class Database(object):
 	def __init__(self, ipcis, dns):
@@ -14,3 +15,4 @@ class Database(object):
 		self.location = LocationModel(self.ipcis)
 		self.active = ActiveModel(self.ipcis)
 		self.service = ServiceModel(self.ipcis)
+		self.list = DomainListModel(self.ipcis)

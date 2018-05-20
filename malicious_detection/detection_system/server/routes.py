@@ -5,3 +5,4 @@ from handler import topo
 from handler import location
 from handler import active
 from handler import service
+from handler import domain_list

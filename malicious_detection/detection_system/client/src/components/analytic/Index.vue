@@ -3,11 +3,13 @@
         <Layout>
             <!-- 顶部导航栏 -->
             <Header>
-                <Menu mode="horizontal" theme="dark" active-name="1">
-                    <div class="layout-logo">IPCIS 恶意域名跟踪系统</div>
-                    <div class="layout-nav">
-                        <Icon type="search" size="20" color="#fff" style="margin:7px;"></Icon>
-                        <Input v-model="targetDomain" placeholder="输入要查询的域名..." clearable style="width: 200px"></Input>
+                <Menu mode="horizontal" theme="dark">
+                    <div class="nav-head">
+                        <div class="nav-head-logo">IPCIS</div>
+                        <div class="nav-head-title">
+                            <div>恶意域名检测系统</div>
+                            <div>Malicious Domain Detection System</div>
+                        </div>
                     </div>
                 </Menu>
             </Header>
@@ -96,13 +98,27 @@
     border-radius: 4px;
     overflow: hidden;
 }
-.layout-logo{
-    width: 300px;
-    float: left;
-    position: relative;
+.nav-head{
+    display: flex;
+    flex-direction: row;
+    width: 500px;
+    height: 60px;
     color: #fff;
-    font-size: 23px;
+}
+.nav-head-logo{
+    margin: 5px 15px;
+    font-size: 24px;
     font-weight: bold;
+}
+.nav-head-title{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    font-size: 14px;
+}
+.nav-head-title div{
+    height: 30px;
+    margin: -5px 0;
 }
 .layout-nav{
     width: 420px;

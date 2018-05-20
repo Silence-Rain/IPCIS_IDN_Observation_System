@@ -1,37 +1,43 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/components/Index'
-import Info from '@/components/Info'
-import Trend from '@/components/Trend'
-import Map from '@/components/Map'
-import Relation from '@/components/Relation'
+import Index from '@/components/analytic/Index'
+import KnownList from '@/components/KnownList'
+import Info from '@/components/analytic/Info'
+import Trend from '@/components/analytic/Trend'
+import Map from '@/components/analytic/Map'
+import Relation from '@/components/analytic/Relation'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
-    	path: '/',
-    	name: 'Index',
+    	path: "/known_list",
+    	name: "KnownList",
+    	component: KnownList
+    },
+    {
+    	path: "/analytic",
+    	name: "Analytic",
     	component: Index,
     	children:[
     		{
-		    	path: "/Info",
+		    	path: "/info",
 		    	name: "Info",
 		    	component: Info
 		    },
 		    {
-		    	path: "/Trend",
+		    	path: "/trend",
 		    	name: "Trend",
 		    	component: Trend
 		    },
 		    {
-		    	path: "/Map",
+		    	path: "/map",
 		    	name: "Map",
 		    	component: Map
 		    },
 		    {
-		    	path: "/Relation",
+		    	path: "/relation",
 		    	name: "Relation",
 		    	component: Relation
 		    }

@@ -15,7 +15,7 @@
 
 <script>
 	import inMap from "inmap/dist/inmap.min.js"
-	import { MP } from '../js/map.js'
+	// import { MP } from '../js/map.js'
 
 	export default {
 		data () {

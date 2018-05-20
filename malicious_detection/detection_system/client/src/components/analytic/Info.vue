@@ -96,15 +96,15 @@
 		},
 
 		mounted () {
-			this.axios.post("https://118.89.140.118:8888/info", {domain_name: this.name})
-				.then((response) => {
-					this.staticInfo = response.static
-					this.whoisInfo = response.whois
-					this.ipInfo = response.ip
-				})
-				.catch((response) => {
-					alert("加载错误，请稍后再试！")
-				})
+			// this.axios.post("https://118.89.140.118:8888/info", {domain_name: this.name})
+			// 	.then((response) => {
+			// 		this.staticInfo = response.static
+			// 		this.whoisInfo = response.whois
+			// 		this.ipInfo = response.ip
+			// 	})
+			// 	.catch((response) => {
+			// 		alert("加载错误，请稍后再试！")
+			// 	})
 		}
 	}
 </script>
