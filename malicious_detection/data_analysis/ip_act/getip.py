@@ -1,11 +1,12 @@
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import utils.mysql as mysql
+from utils.mysql import MySQL
 import os  
 import socket
 import struct
 
+dns_db = MySQL(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
 file = open('./3mths.txt') 
 
 #获取域名列表
@@ -24,13 +25,10 @@ ip_dic = {}
 
 # SQL 查询语句
 for name in name_list :
-   sql = "select ip from resolved_ip where domain_name='"+name+"';"
-   #执行SQL语句
-   mysql.cursor.execute(sql)
-   
+   sql = "select ip from resolved_ip where domain_name='"+name+"';"   
    
    #fetchall:获取ip的数据
-   ip = mysql.cursor.fetchall()
+   ip = dns_db.query(sql)
    if len(ip) !=0:
        ip = list(ip[0])
    else:
@@ -48,8 +46,5 @@ file.write(str(ip_dic))
 file.close()  
 
 
-#关闭指针对象
-mysql.cursor.close()
-
-#关闭连接对象
-mysql.conn.close()
+#关闭连接
+dns_db.close()

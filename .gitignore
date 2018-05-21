@@ -1,5 +1,5 @@
+.gitignore
 **/data
 **/__pycache__/
-**/mysql.py
 **/*.pyc
-
+**/config.py
