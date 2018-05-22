@@ -1,5 +1,7 @@
 #!coding=utf8
 
+from IPy import *
+
 class ActiveModel(object):
 	def __init__(self, ipcis):
 		self.ipcis = ipcis
@@ -16,7 +18,7 @@ class ActiveModel(object):
 	async def get_raw_data(self, ips):
 		ret = []
 		for ip in ips:
-			temp = {"ip": ip[0], "count": ip[1], "opposite_ip": {}, "ip_geo": {}}
+			temp = {"ip": str(IP(ip[0])), "count": ip[1], "opposite_ip": {}, "ip_geo": {}}
 
 			rs = await self.ipcis.query(
 				"SELECT ip_2,ip_2_lnglat,date FROM ip_activity_record WHERE ip_1=%s;" % ip[0])

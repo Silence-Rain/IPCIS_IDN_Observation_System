@@ -1,5 +1,7 @@
 #!coding=utf8
 
+from IPy import *
+
 class LocationModel(object):
 	def __init__(self, ipcis):
 		self.ipcis = ipcis
@@ -9,7 +11,7 @@ class LocationModel(object):
 		temp = raw[2].split(",")
 		ret["lng"] = float(temp[0])
 		ret["lat"] = float(temp[1])
-		ret["ip"] = raw[0]
+		ret["ip"] = str(IP(raw[0]))
 		ret["location"] = raw[1]
 		ret["count"] = eval(raw[3])
 

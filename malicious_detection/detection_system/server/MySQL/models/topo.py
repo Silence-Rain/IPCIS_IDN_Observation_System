@@ -1,5 +1,7 @@
 #!coding=utf8
 
+from IPy import *
+
 class TopoModel(object):
 	def __init__(self, ipcis):
 		self.ipcis = ipcis
@@ -19,6 +21,6 @@ class TopoModel(object):
 			rs = await self.ipcis.query(
 				"SELECT ip_1,ip_2,count,date FROM ip_activity_record WHERE ip_1=%s" % ip)
 			for item in rs:
-				ret.append(list(item))
+				ret.append([str(IP(item[0])), str(IP(item[1])), item[2], item[3]])
 
 		return ret

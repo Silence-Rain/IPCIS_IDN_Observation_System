@@ -1,5 +1,7 @@
 #!coding=utf8
 
+from IPy import *
+
 class InfoModel(object):
 	def __init__(self, ipcis, dns):
 		self.ipcis = ipcis
@@ -16,7 +18,7 @@ class InfoModel(object):
 		ret = []
 		for item in raw:
 			temp = {"ip":"", "location":"", "count":[]}
-			temp["ip"] = item[0]
+			temp["ip"] = str(IP(item[0]))
 			temp["location"] = item[1]
 			temp["count"] = eval(item[2])
 			ret.append(temp)
