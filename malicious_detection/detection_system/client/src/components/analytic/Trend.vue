@@ -19,15 +19,7 @@
 		data () {
 			return {
 				targetDomain: "ns2.hostkey.com",
-				raw: [
-					// {
-					// 	ip: "118.89.140.118",
-					// 	active: 90,
-					// 	count: [220, 182, 191, 234, 290, 330, 310, 120, 132, 101, 134, 90, 230, 210],
-					// 	opposite_ip_count: [820, 932, 901, 934, 1290, 1330, 1320, 820, 932, 901, 934, 1290, 1330, 1320],
-					// 	ip_geo_entropy: [1.1, 2.2, 1.2, 2.3, 1.3, 2.4, 1.4, 2.5, 1.5, 2.6, 1.6, 2.7, 1.7, 2.8, 1.8, 2.9]
-					// }
-				]
+				raw: []
 			}
 		},
 
@@ -43,9 +35,11 @@
 			}
 		},
 
+		created () {
+			this.targetDomain = this.$route.params.domain_name
+		},
+
 		mounted () {
-			// this.targetDomain = this.$route.params.domain_name
-			
 			let echarts = require("echarts/lib/echarts")
 			require('echarts/lib/chart/line')
 			require('echarts/lib/component/legend')
@@ -57,12 +51,22 @@
 			let ipChart = echarts.init(document.getElementById("ip_chart"))
 			let entropyChart = echarts.init(document.getElementById("entropy_chart"))
 
+			countChart.showLoading()
+			ipChart.showLoading()
+			entropyChart.showLoading()
+
 			this.axios.get(this.testUrl + "/active", 
-				{domain_name: this.targetDomain})
+				{params: {domain_name: "ns2.hostkey.com"}})
 				.then((response) => {
+					countChart.hideLoading()
+					ipChart.hideLoading()
+					entropyChart.hideLoading()
+
+					this.raw = response.data.result
+
 					let countOption = this.graphInit("IP活动量趋势", this.raw, "count")
 					let ipOption = this.graphInit("对端IP数量趋势", this.raw, "opposite_ip_count")
-					let entropyOption = this.graphInit("对端IP地理分布熵趋势", this.raw, "ip_geo_entropy")
+					let entropyOption = this.graphInit("对端IP地理分布熵趋势", this.raw, "ip_geo")
 
 					countChart.setOption(countOption)
 					ipChart.setOption(ipOption)
@@ -75,6 +79,10 @@
 					})
 				})
 				.catch((response) => {
+					countChart.hideLoading()
+					ipChart.hideLoading()
+					entropyChart.hideLoading()
+					
 					this.$Message.error("对方不想说话，所以等会再试吧")
 				})
 		},

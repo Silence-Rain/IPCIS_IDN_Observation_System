@@ -2,8 +2,8 @@
 	<div>
 		<div class="label">
 			<Select v-model="selectIndex" style="width:120px;" @on-change="selectChange">
-		        <Option v-for="item in graphLabel" :value="item.value" :key="item.value">{{ item.label }}</Option>
-		    </Select>
+				<Option v-for="item in graphLabel" :value="item.value" :key="item.value">{{ item.label }}</Option>
+			</Select>
 		</div>
 		<hr color="#f5f7f9"/>
 		<div v-show="showIndex">
@@ -24,8 +24,7 @@
 		data () {
 			return {
 				targetDomain: "ns2.hostkey.com",
-				// steady: {"nodes": [{"id": 0, "name": 3396847626, "count": 133}, {"id": 1, "name": 2449492302, "count": 169}], "links": [{"source": 1, "target": 0}]},
-				// max: {"nodes": [{"id": 0, "name": 3544580385, "count": 1}, {"id": 1, "name": 3396862564, "count": 2}, {"id": 2, "name": 3396343685, "count": 1}, {"id": 3, "name": 3396804614, "count": 7}, {"id": 4, "name": 3525073927, "count": 1}, {"id": 5, "name": 3396343689, "count": 1}, {"id": 6, "name": 3396862634, "count": 9}, {"id": 7, "name": 3396847626, "count": 133}, {"id": 8, "name": 3396862635, "count": 2}, {"id": 9, "name": 3396816906, "count": 1}, {"id": 10, "name": 2449492302, "count": 169}, {"id": 11, "name": 3396804620, "count": 11}], "links": [{"source": 10, "target": 8}, {"source": 10, "target": 7}, {"source": 10, "target": 6}, {"source": 10, "target": 9}, {"source": 10, "target": 2}, {"source": 10, "target": 1}, {"source": 10, "target": 4}, {"source": 10, "target": 3}, {"source": 10, "target": 11}, {"source": 10, "target": 0}, {"source": 10, "target": 5}]},
+				ips: [],
 				steady: {},
 				max: {},
 				graphLabel: [
@@ -40,8 +39,7 @@
 				],
 				selectIndex: 0,
 				chartSteady: null,
-				chartMax: null,
-				ips: []
+				chartMax: null
 			}
 		},
 
@@ -53,33 +51,55 @@
 
 		created () {
 			this.ips = this.$route.params.ips
+			this.targetDomain = this.$route.params.domain_name
 		},
 
 		mounted () {
-			// this.targetDomain = this.$route.params.domain_name
-
 			let echarts = require("echarts/lib/echarts")
 			require('echarts/lib/chart/graph')
 			require('echarts/lib/component/legend')
 			require('echarts/lib/component/tooltip')
 			require('echarts/lib/component/title')
+			
 			this.chartSteady = echarts.init(document.getElementById("chartSteady"))
 			this.chartMax = echarts.init(document.getElementById("chartMax"))
 
+			this.chartSteady.showLoading()
 			this.axios.get(this.testUrl + "/topo/steady", 
-				{domain_name: this.targetDomain})
+				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
-					this.steady = response.data.result
+					this.chartSteady.hideLoading()
 
-					// let optionMax = this.graphInit(this.max)
-					// this.chartMax.setOption(optionMax)
+					this.steady = response.data.result
 					let optionSteady = this.graphInit(this.steady)
 					this.chartSteady.setOption(optionSteady)
 
 					window.addEventListener("resize", () => {
 						this.chartSteady.resize()
+					})
+				})
+				.catch((response) => {
+					this.chartSteady.hideLoading()
+					this.$Message.error("对方不想说话，所以等会再试吧");
+				})
+
+			this.chartMax.showLoading()
+			this.axios.get(this.testUrl + "/topo/max", 
+				{params: {domain_name: this.targetDomain}})
+				.then((response) => {
+					this.chartMax.hideLoading()
+
+					this.max = response.data.result
+					let option = this.graphInit(this.max)
+					this.chartMax.setOption(option)
+
+					window.addEventListener("resize", () => {
 						this.chartMax.resize()
 					})
+				})
+				.catch((response) => {
+					this.chartMax.hideLoading()
+					this.$Message.error("对方不想说话，所以等会再试吧");
 				})
 		},
 
@@ -129,11 +149,11 @@
 					}],
 					tooltip: {},
 					toolbox: {
-				        feature: {
-				            saveAsImage: {}
-				        },
-				        right: "5%"
-				    },
+						feature: {
+							saveAsImage: {}
+						},
+						right: "5%"
+					},
 					animationDurationUpdate: 1500,
 					animationEasingUpdate: 'quinticInOut',
 					series : [
@@ -169,23 +189,6 @@
 					this.chartMax.resize()
 					this.chartSteady.resize()
 				})
-				if (value == 1) {
-					if (!this.max.hasOwnProperty("nodes")) {
-						this.chartMax.showLoading()
-						this.axios.get(this.testUrl + "/topo/max", 
-							{domain_name: this.targetDomain})
-							.then((response) => {
-								this.chartMax.hideLoading()
-								this.max = response.data.result
-								let option = this.graphInit(this.max)
-								chartMax.setOption(option);
-							})
-							.catch((response) => {
-								this.chartMax.hideLoading()
-								this.$Message.error("对方不想说话，所以等会再试吧");
-							})
-					}
-				}
 			}
 		}
 	}

@@ -17,29 +17,7 @@
 		data () {
 			return {
 				targetDomain: "ns2.hostkey.com",
-				raw: [
-				// {
-			 //        lng: 118.8028, 
-			 //        lat: 32.0647,
-			 //        ip: "202.112.23.167",
-			 //        location: "中国-江苏-南京",
-			 //        count: [25,12,21]
-				// },
-				// {
-			 //        lng: 112.95, 
-			 //        lat: 28.43,
-			 //        ip: 2449492302,
-			 //        location: "中国-湖南-长沙",
-			 //        count: [12,10,9]
-				// },
-				// {
-			 //        lng: 113.27, 
-			 //        lat: 21.13,
-			 //        ip: "192.168.1.1",
-			 //        location: "中国-江苏-南京",
-			 //        count: [18,42,24]
-				// }
-				],
+				raw: [],
 				ips: []
 			}
 		},
@@ -63,13 +41,12 @@
 
 		created () {
 			this.ips = this.$route.params.ips
+			this.targetDomain = this.$route.params.domain_name
 		},
 
 		mounted () {
-			// this.targetDomain = this.$route.params.domain_name
-			
-			this.axios.get("https://118.89.140.118:8888/location", 
-				{domain_name: "ns2.hostkey.com"})
+			this.axios.get(this.testUrl + "/location", 
+				{params: {domain_name: "ns2.hostkey.com"}})
 				.then((response) => {
 					this.raw = response.data.result
 					this.mapInit(this.acts)
@@ -77,7 +54,6 @@
 				.catch((response) => {
 					this.$Message.error("对方不想说话，所以等会再试吧")
 				})
-			
 		},
 
 		methods: {
@@ -137,7 +113,7 @@ hr{
 	flex-direction: row;
 	align-items: center;
 	width: 650px;
-    margin: 10px;
-    font-size: 16px;
+	margin: 10px;
+	font-size: 16px;
 }
 </style>

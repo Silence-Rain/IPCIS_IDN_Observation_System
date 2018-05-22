@@ -27,8 +27,8 @@
 					<Page style="float:right;margin:10px;" :total="length" :current="curPage" :page-size="20" show-total @on-change="changePage"></Page>
 
 					<Modal v-model="showAddModal" title="添加恶意域名" @on-ok="addDomain">
-				        <Input v-model="newDomain" placeholder="请输入完整域名"></Input>
-				    </Modal>
+						<Input v-model="newDomain" placeholder="请输入完整域名"></Input>
+					</Modal>
 				</Content>
 			</Layout>
 			<Footer class="footer">
@@ -92,13 +92,16 @@
 			}
 		},
 		mounted () {
+			this.isLoading = true
 			this.axios.get(this.testUrl + "/list")
 				.then((response) => {
+					this.isLoading = false
 					for (var item of response.data.result) {
 						this.rawList.push(this.formatter(item))
 					}
 				})
 				.catch((response) => {
+					this.isLoading = false
 					this.$Message.error("对方不想说话，所以等会再试吧");
 				})
 		},
@@ -141,11 +144,11 @@
 
 <style scoped>
 .layout{
-    border: 1px solid #d7dde4;
-    background: #f5f7f9;
-    position: relative;
-    border-radius: 4px;
-    overflow: hidden;
+	border: 1px solid #d7dde4;
+	background: #f5f7f9;
+	position: relative;
+	border-radius: 4px;
+	overflow: hidden;
 }
 .nav-head{
 	display: flex;

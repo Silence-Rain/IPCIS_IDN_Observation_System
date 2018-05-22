@@ -68,7 +68,7 @@
 	                    key: "location"
 	                },
 	                {
-	                    title: "IP活动量",
+	                    title: "IP活动量（14天总计）",
 	                    key: "count"
 	                }
 	            ],
@@ -78,8 +78,11 @@
 	        }
 		},
 
+		created () {
+			this.targetDomain = this.$route.params.domain_name
+		},
+
 		mounted () {
-			// this.targetDomain = this.$route.params.domain_name
 			this.localLoading = true
 			this.remoteLoading = true
 
@@ -89,6 +92,11 @@
 					this.localLoading = false
 					this.staticInfo = [response.data.result.static]
 					this.ipInfo = response.data.result.ip
+					for (var item of this.ipInfo) {
+						item.count = item.count.reduce((acc, val) => {
+							return acc + val
+						})
+					}
 
 					this.bus.$emit("upIp", this.getResolvedIPs())
 				})
