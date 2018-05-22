@@ -27,7 +27,10 @@
 		data () {
 			return {
 				targetDomain: "ns2.hostkey.com",
-				raw: []
+				raw: [],
+				countChart: null,
+				ipChart: null,
+				entropyChart: null
 			}
 		},
 
@@ -47,6 +50,12 @@
 			this.targetDomain = this.$route.params.domain_name
 		},
 
+		activated () {
+			this.countChart.resize()
+			this.ipChart.resize()
+			this.entropyChart.resize()
+		},
+
 		mounted () {
 			let echarts = require("echarts/lib/echarts")
 			require('echarts/lib/chart/line')
@@ -55,20 +64,20 @@
 			require('echarts/lib/component/toolbox')
 			require('echarts/lib/component/title')
 
-			let countChart = echarts.init(document.getElementById("count_chart"))
-			let ipChart = echarts.init(document.getElementById("ip_chart"))
-			let entropyChart = echarts.init(document.getElementById("entropy_chart"))
+			this.countChart = echarts.init(document.getElementById("count_chart"))
+			this.ipChart = echarts.init(document.getElementById("ip_chart"))
+			this.entropyChart = echarts.init(document.getElementById("entropy_chart"))
 
-			countChart.showLoading()
-			ipChart.showLoading()
-			entropyChart.showLoading()
+			this.countChart.showLoading()
+			this.ipChart.showLoading()
+			this.entropyChart.showLoading()
 
 			this.axios.get(this.testUrl + "/active", 
 				{params: {domain_name: "ns2.hostkey.com"}})
 				.then((response) => {
-					countChart.hideLoading()
-					ipChart.hideLoading()
-					entropyChart.hideLoading()
+					this.countChart.hideLoading()
+					this.ipChart.hideLoading()
+					this.entropyChart.hideLoading()
 
 					this.raw = response.data.result
 
@@ -76,20 +85,20 @@
 					let ipOption = this.graphInit("对端IP数量趋势", this.raw, "opposite_ip_count")
 					let entropyOption = this.graphInit("对端IP地理分布熵趋势", this.raw, "ip_geo")
 
-					countChart.setOption(countOption)
-					ipChart.setOption(ipOption)
-					entropyChart.setOption(entropyOption)
+					this.countChart.setOption(countOption)
+					this.ipChart.setOption(ipOption)
+					this.entropyChart.setOption(entropyOption)
 
 					window.addEventListener("resize", () => {
-						countChart.resize()
-						ipChart.resize()
-						entropyChart.resize()
+						this.countChart.resize()
+						this.ipChart.resize()
+						this.entropyChart.resize()
 					})
 				})
 				.catch((response) => {
-					countChart.hideLoading()
-					ipChart.hideLoading()
-					entropyChart.hideLoading()
+					this.countChart.hideLoading()
+					this.ipChart.hideLoading()
+					this.entropyChart.hideLoading()
 					
 					this.$Message.error("对方不想说话，所以等会再试吧")
 				})

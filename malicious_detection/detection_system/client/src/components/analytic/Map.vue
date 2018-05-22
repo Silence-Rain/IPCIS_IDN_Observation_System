@@ -1,11 +1,11 @@
 <template>
 	<div>
 		<div class="label">
-			<div>IP活动地理位置分布</div>
+			<div>IP地理位置分布</div>
 		</div>
 		<hr color="#f5f7f9"/>
 		<keep-alive>
-			<div id="chart" style="width:650px;height:500px;"></div>
+			<div id="chart" style="width:100%;height:500px;"></div>
 		</keep-alive>
 	</div>
 </template>
@@ -64,7 +64,7 @@
 					skin: "Blueness",
 					center: [107.40, 33.42],
 					zoom: {
-						value: 4, 
+						value: 3, 
 						show: true, 
 						max: 10, 
 						min: 2

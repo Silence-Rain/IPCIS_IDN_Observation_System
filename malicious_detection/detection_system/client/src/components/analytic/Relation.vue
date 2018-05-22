@@ -54,6 +54,11 @@
 			this.targetDomain = this.$route.params.domain_name
 		},
 
+		activated () {
+			this.chartSteady.resize()
+			this.chartMax.resize()
+		},
+
 		mounted () {
 			let echarts = require("echarts/lib/echarts")
 			require('echarts/lib/chart/graph')

@@ -34,7 +34,7 @@
                                 域名活跃度
                             </MenuItem>
                             <MenuItem name="3">
-                                地理位置分布
+                                IP地理位置分布
                             </MenuItem>
                         </Submenu>
                     </Menu>
@@ -75,7 +75,7 @@
                     ["概览", "Info"], 
                     ["IP地址通信活动关系", "Relation"],
                     ["域名活跃度", "Trend"], 
-                    ["地理位置分布", "Map"]
+                    ["IP地理位置分布", "Map"]
                 ],
                 curPage: 0,
                 ips: []
