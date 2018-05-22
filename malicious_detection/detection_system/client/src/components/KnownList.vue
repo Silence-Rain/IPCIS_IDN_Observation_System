@@ -92,7 +92,7 @@
 			}
 		},
 		mounted () {
-			this.axios.get("https://118.89.140.118:8888/list")
+			this.axios.get(this.testUrl + "/list")
 				.then((response) => {
 					for (var item of response.data.result) {
 						this.rawList.push(this.formatter(item))

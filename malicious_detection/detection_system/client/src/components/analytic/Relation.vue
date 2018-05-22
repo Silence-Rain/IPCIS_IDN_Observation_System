@@ -24,8 +24,10 @@
 		data () {
 			return {
 				targetDomain: "ns2.hostkey.com",
-				steady: {"nodes": [{"id": 0, "name": 3396847626, "count": 133}, {"id": 1, "name": 2449492302, "count": 169}], "links": [{"source": 1, "target": 0}]},
-				max: {"nodes": [{"id": 0, "name": 3544580385, "count": 1}, {"id": 1, "name": 3396862564, "count": 2}, {"id": 2, "name": 3396343685, "count": 1}, {"id": 3, "name": 3396804614, "count": 7}, {"id": 4, "name": 3525073927, "count": 1}, {"id": 5, "name": 3396343689, "count": 1}, {"id": 6, "name": 3396862634, "count": 9}, {"id": 7, "name": 3396847626, "count": 133}, {"id": 8, "name": 3396862635, "count": 2}, {"id": 9, "name": 3396816906, "count": 1}, {"id": 10, "name": 2449492302, "count": 169}, {"id": 11, "name": 3396804620, "count": 11}], "links": [{"source": 10, "target": 8}, {"source": 10, "target": 7}, {"source": 10, "target": 6}, {"source": 10, "target": 9}, {"source": 10, "target": 2}, {"source": 10, "target": 1}, {"source": 10, "target": 4}, {"source": 10, "target": 3}, {"source": 10, "target": 11}, {"source": 10, "target": 0}, {"source": 10, "target": 5}]},
+				// steady: {"nodes": [{"id": 0, "name": 3396847626, "count": 133}, {"id": 1, "name": 2449492302, "count": 169}], "links": [{"source": 1, "target": 0}]},
+				// max: {"nodes": [{"id": 0, "name": 3544580385, "count": 1}, {"id": 1, "name": 3396862564, "count": 2}, {"id": 2, "name": 3396343685, "count": 1}, {"id": 3, "name": 3396804614, "count": 7}, {"id": 4, "name": 3525073927, "count": 1}, {"id": 5, "name": 3396343689, "count": 1}, {"id": 6, "name": 3396862634, "count": 9}, {"id": 7, "name": 3396847626, "count": 133}, {"id": 8, "name": 3396862635, "count": 2}, {"id": 9, "name": 3396816906, "count": 1}, {"id": 10, "name": 2449492302, "count": 169}, {"id": 11, "name": 3396804620, "count": 11}], "links": [{"source": 10, "target": 8}, {"source": 10, "target": 7}, {"source": 10, "target": 6}, {"source": 10, "target": 9}, {"source": 10, "target": 2}, {"source": 10, "target": 1}, {"source": 10, "target": 4}, {"source": 10, "target": 3}, {"source": 10, "target": 11}, {"source": 10, "target": 0}, {"source": 10, "target": 5}]},
+				steady: {},
+				max: {},
 				graphLabel: [
 					{
 						value: 0,
@@ -64,37 +66,21 @@
 			this.chartSteady = echarts.init(document.getElementById("chartSteady"))
 			this.chartMax = echarts.init(document.getElementById("chartMax"))
 
-			let optionMax = this.graphInit(this.max)
-			this.chartMax.setOption(optionMax)
-			let optionSteady = this.graphInit(this.steady)
-			this.chartSteady.setOption(optionSteady)
+			this.axios.get(this.testUrl + "/topo/steady", 
+				{domain_name: this.targetDomain})
+				.then((response) => {
+					this.steady = response.data.result
 
-			window.addEventListener("resize", () => {
-				this.chartSteady.resize()
-				this.chartMax.resize()
-			})
-			
-			// chartSteady.showLoading()
-			// let config = {
-			// 	method: "GET",
-			// 	url: "http://118.89.140.118:8888/topo/steady",
-			// 	headers: {
-			// 		"domain_name": this.targetDomain,
-			// 		"Content-Type": "application/x-www-form-urlencoded"
-			// 	}
-			// }
-			// this.axios(config)
-			// 	.then((response) => {
-			// 		chartSteady.hideLoading()
-			// 		console.log(response)
-			// 		let option = graphInit(response)			
-			// 		chartSteady.setOption(option);
-			// 	})
-			// 	.catch((response) => {
-			// 		chartSteady.hideLoading()
-			// 		this.$Message.error("对方不想说话，所以等会再试吧");
-			// 	})
+					// let optionMax = this.graphInit(this.max)
+					// this.chartMax.setOption(optionMax)
+					let optionSteady = this.graphInit(this.steady)
+					this.chartSteady.setOption(optionSteady)
 
+					window.addEventListener("resize", () => {
+						this.chartSteady.resize()
+						this.chartMax.resize()
+					})
+				})
 		},
 
 		methods: {
@@ -186,10 +172,12 @@
 				if (value == 1) {
 					if (!this.max.hasOwnProperty("nodes")) {
 						this.chartMax.showLoading()
-						this.axios.get("http://118.89.140.118:8888/topo/max")
+						this.axios.get(this.testUrl + "/topo/max", 
+							{domain_name: this.targetDomain})
 							.then((response) => {
 								this.chartMax.hideLoading()
-								let option = this.graphInit(response)			
+								this.max = response.data.result
+								let option = this.graphInit(this.max)
 								chartMax.setOption(option);
 							})
 							.catch((response) => {

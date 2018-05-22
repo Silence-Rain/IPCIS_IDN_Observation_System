@@ -7,7 +7,7 @@ import routes
 class LocationHandler(BaseHandler):
 
 	async def get(self):
-		domain = self.request.headers["domain_name"]
+		domain = self.get_argument("domain_name")
 		res = await self.db.location.get_location(domain)
 		self.finish_success(result=res)
 

@@ -18,14 +18,15 @@
 	export default {
 		data () {
 			return {
+				targetDomain: "ns2.hostkey.com",
 				raw: [
-					{
-						ip: "118.89.140.118",
-						active: 90,
-						count: [220, 182, 191, 234, 290, 330, 310, 120, 132, 101, 134, 90, 230, 210],
-						opposite_ip_count: [820, 932, 901, 934, 1290, 1330, 1320, 820, 932, 901, 934, 1290, 1330, 1320],
-						ip_geo_entropy: [1.1, 2.2, 1.2, 2.3, 1.3, 2.4, 1.4, 2.5, 1.5, 2.6, 1.6, 2.7, 1.7, 2.8, 1.8, 2.9]
-					}
+					// {
+					// 	ip: "118.89.140.118",
+					// 	active: 90,
+					// 	count: [220, 182, 191, 234, 290, 330, 310, 120, 132, 101, 134, 90, 230, 210],
+					// 	opposite_ip_count: [820, 932, 901, 934, 1290, 1330, 1320, 820, 932, 901, 934, 1290, 1330, 1320],
+					// 	ip_geo_entropy: [1.1, 2.2, 1.2, 2.3, 1.3, 2.4, 1.4, 2.5, 1.5, 2.6, 1.6, 2.7, 1.7, 2.8, 1.8, 2.9]
+					// }
 				]
 			}
 		},
@@ -43,6 +44,8 @@
 		},
 
 		mounted () {
+			// this.targetDomain = this.$route.params.domain_name
+			
 			let echarts = require("echarts/lib/echarts")
 			require('echarts/lib/chart/line')
 			require('echarts/lib/component/legend')
@@ -54,19 +57,26 @@
 			let ipChart = echarts.init(document.getElementById("ip_chart"))
 			let entropyChart = echarts.init(document.getElementById("entropy_chart"))
 
-			let countOption = this.graphInit("IP活动量趋势", this.raw, "count")
-			let ipOption = this.graphInit("对端IP数量趋势", this.raw, "opposite_ip_count")
-			let entropyOption = this.graphInit("对端IP地理分布熵趋势", this.raw, "ip_geo_entropy")
+			this.axios.get(this.testUrl + "/active", 
+				{domain_name: this.targetDomain})
+				.then((response) => {
+					let countOption = this.graphInit("IP活动量趋势", this.raw, "count")
+					let ipOption = this.graphInit("对端IP数量趋势", this.raw, "opposite_ip_count")
+					let entropyOption = this.graphInit("对端IP地理分布熵趋势", this.raw, "ip_geo_entropy")
 
-			countChart.setOption(countOption)
-			ipChart.setOption(ipOption)
-			entropyChart.setOption(entropyOption)
+					countChart.setOption(countOption)
+					ipChart.setOption(ipOption)
+					entropyChart.setOption(entropyOption)
 
-			window.addEventListener("resize", () => {
-				countChart.resize()
-				ipChart.resize()
-				entropyChart.resize()
-			})
+					window.addEventListener("resize", () => {
+						countChart.resize()
+						ipChart.resize()
+						entropyChart.resize()
+					})
+				})
+				.catch((response) => {
+					this.$Message.error("对方不想说话，所以等会再试吧")
+				})
 		},
 
 		methods: {

@@ -83,7 +83,7 @@
 			this.localLoading = true
 			this.remoteLoading = true
 
-			this.axios.post("http://118.89.140.118:8888/info/local", 
+			this.axios.post(this.testUrl + "/info/local", 
 				JSON.stringify({domain_name: this.targetDomain}))
 				.then((response) => {
 					this.localLoading = false
@@ -96,7 +96,7 @@
 					this.localLoading = false
 					this.$Message.error("对方不想说话，所以等会再试吧")
 				})
-			this.axios.post("http://118.89.140.118:8888/info/remote", 
+			this.axios.post(this.testUrl + "/info/remote", 
 				JSON.stringify({domain_name: this.targetDomain}))
 				.then((response) => {
 					this.remoteLoading = false

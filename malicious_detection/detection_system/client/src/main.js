@@ -11,6 +11,8 @@ Vue.config.productionTip = false
 Vue.use(iView)
 Vue.prototype.axios = axios
 Vue.prototype.bus = new Vue()
+Vue.prototype.testUrl = "https://silence-rain.cn:8888"
+Vue.prototype.prodUrl = "http://211.65.193.23:8888"
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 /* eslint-disable no-new */
