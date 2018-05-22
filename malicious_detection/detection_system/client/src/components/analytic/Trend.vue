@@ -1,5 +1,13 @@
 <template>
 	<div>
+		<div class="title">IP计算活跃度概览</div>
+		<div class="cards" v-for="item in raw">
+			<div class="card">
+				<p style="font-size:35px;font-weight:bold;">{{item.active}}</p>
+				<p>{{item.ip}}计算活跃度</p>
+			</div>
+		</div>
+		<hr color="#f5f7f9"/>
 		<keep-alive>
 			<div id="count_chart" style="width:100%;height:400px;"></div>
 		</keep-alive>
@@ -95,54 +103,54 @@
 				for (var item of raw) {
 					labels.push(item.ip)
 					data.push({
-			            name: item.ip,
-			            type: 'line',
-			            data: item[key]
-			        })
+						name: item.ip,
+						type: 'line',
+						data: item[key]
+					})
 				}
 
 				return {
-				    title: {
-				        text: title
-				    },
-				    tooltip : {
-				        trigger: 'axis',
-				        axisPointer: {
-				            type: 'cross',
-				            label: {
-				                backgroundColor: '#6a7985'
-				            }
-				        }
-				    },
-				    legend: {
-				        data: labels,
-				        top: "2%"
-				    },
-				    grid: {
-				        left: '3%',
-				        right: '4%',
-				        bottom: '3%',
-				        containLabel: true
-				    },
-				    toolbox: {
-				        feature: {
-				            saveAsImage: {}
-				        },
-				        right: "5%"
-				    },
-				    xAxis: [
-				        {
-				            type: 'category',
-				            boundaryGap: false,
-				            data: this.timeLabels
-				        }
-				    ],
-				    yAxis: [
-				        {
-				            type: 'value'
-				        }
-				    ],
-				    series: data
+					title: {
+						text: title
+					},
+					tooltip : {
+						trigger: 'axis',
+						axisPointer: {
+							type: 'cross',
+							label: {
+								backgroundColor: '#6a7985'
+							}
+						}
+					},
+					legend: {
+						data: labels,
+						top: "2%"
+					},
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true
+					},
+					toolbox: {
+						feature: {
+							saveAsImage: {}
+						},
+						right: "5%"
+					},
+					xAxis: [
+						{
+							type: 'category',
+							boundaryGap: false,
+							data: this.timeLabels
+						}
+					],
+					yAxis: [
+						{
+							type: 'value'
+						}
+					],
+					series: data
 				}
 			}
 		}
@@ -153,5 +161,21 @@
 hr{
 	margin: 10px 0;
 	background-color: #f5f7f9;
+}
+.title{
+	font-size: 18px;
+	font-weight: bold;
+	margin: 0 5px;
+}
+.cards{
+	display: flex;
+	flex-direction: row;
+	padding: 20px;
+}
+.card{
+	display: flex;
+	flex-direction: column;
+	align-items: left;
+	margin: 0 10px;
 }
 </style>

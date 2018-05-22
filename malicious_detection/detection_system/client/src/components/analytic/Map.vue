@@ -113,7 +113,8 @@ hr{
 	flex-direction: row;
 	align-items: center;
 	width: 650px;
-	margin: 10px;
-	font-size: 16px;
+	margin: 5px;
+	font-size: 18px;
+	font-weight: bold;
 }
 </style>
