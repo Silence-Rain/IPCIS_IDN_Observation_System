@@ -4,6 +4,8 @@ import datetime
 import io
 import socket
 import struct
+import time
+import threading
 from utils.mysql import *
 
 #定义ip转数字的方法
@@ -40,7 +42,7 @@ def search_ip_activity(ip,date):
 	return outact,inact
 
 #定义插入IP活动的方法				
-def insert_ip_activity_record(ip1,ip2,msqlink):
+def insert_ip_activity_record(ip1,ip2,msqlink,date):
 	#按条插入IP活动记录
 	#传入ip的字符串形式 和数据库链接
 	
@@ -54,7 +56,7 @@ def insert_ip_activity_record(ip1,ip2,msqlink):
 
 	if result==None :
 	#若不存在，插入ip1 ip2活动数据
-		sql="INSERT INTO known_malicious.ip_activity_record(ip_1,ip_2) values(%s,%s);"%(numofip1,numofip2)           
+		sql="INSERT INTO known_malicious.ip_activity_record(ip_1,ip_2,date) values(%s,%s,'%s');"%(numofip1,numofip2,str(date))           
 		msqlink.execute(sql)
 	#查询IP2的，经纬度并填入	
 		sql="SELECT longitude,latitude FROM center_ipcis.IP2Location WHERE ipStart<=%s AND ipEnd>=%s;"%(numofip2,numofip2)
@@ -63,14 +65,14 @@ def insert_ip_activity_record(ip1,ip2,msqlink):
 		sql="UPDATE known_malicious.ip_activity_record set ip_2_lnglat ='%s' WHERE ip_2=%s "%(str(round(result[0],2))+','+str(round(result[1],2)),numofip2)
 		msqlink.execute(sql)
     
-	#若存在，更新count
+	#若存在，更新count和date
 	else :
-		sql="UPDATE known_malicious.ip_activity_record set count=count+1 WHERE ip_1=%s AND ip_2=%s;"%(numofip1,numofip2)           
+		sql="UPDATE known_malicious.ip_activity_record set count=count+1,date='%s' WHERE ip_1=%s AND ip_2=%s;"%(str(date),numofip1,numofip2)           
 		msqlink.execute(sql)
 	        
 	        
 #定义填写ip_activity_record表格的方法
-def ip_activity_record(msqlink,outrecord,inrecord):	
+def ip_activity_record(msqlink,outrecord,inrecord,date):	
 #按流记录批量写入数据库
 	if outrecord != []:
 		for item in outrecord:
@@ -78,7 +80,7 @@ def ip_activity_record(msqlink,outrecord,inrecord):
 			
 			ip1=outrecord_split[0]
 			ip2=outrecord_split[1]
-			insert_ip_activity_record(ip1,ip2,msqlink)
+			insert_ip_activity_record(ip1,ip2,msqlink,date)
 
 	if inrecord != []:
 		for item in inrecord:
@@ -86,7 +88,7 @@ def ip_activity_record(msqlink,outrecord,inrecord):
 			
 			ip1=inrecord_split[1]
 			ip2=inrecord_split[0]
-			insert_ip_activity_record(ip1,ip2,msqlink)
+			insert_ip_activity_record(ip1,ip2,msqlink,date)
 
 #定义domain2ip表格的填写		
 def domain2ip(msqlink,domain,ip):
@@ -140,6 +142,7 @@ def primary2name(msqlink1,msqlink2,domain):
 	msqlink1.execute(sql)
 
 
+
 # 添加domain_static表的is_dga,ttl字段
 def add_static(msqlink1,msqlink2,domain):
 	sql = ("SELECT primary_domain, is_dga, ttl FROM domain_name "
@@ -157,28 +160,27 @@ def add_register_years(msqlink1,msqlink2,domain):
 	times = ()
 	time_diff = ""
 	sql_get = ("SELECT register_date, expire_date FROM domain_whois "
-	"WHERE primary_domain = '%s';") % item
-	rs = msqlink2.get(sql_get)
+	"WHERE primary_domain = '%s';") % domain
+	rs = msqlink2.query(sql_get,1)
 	if rs != None:
 		times = rs
 
 	try:	
-		temp = datetime.standard2timestamp(item[1]) - datetime.standard2timestamp(item[0])
+		temp = datetime.standard2timestamp(rs[1]) - datetime.standard2timestamp(rs[0])
 		time_diff = datetime.timestamp2diff(temp)
 	except:
 		pass
 
-	for i in range(0, len(pds)):
-		sql_set = ("UPDATE domain_static SET register_years = '%s' "
-		"WHERE primary_domain = '%s';") % (time_diff, domain)
-		msqlink1.execute(sql_set)
+	sql_set = ("UPDATE domain_static SET register_years = '%s' "
+	"WHERE primary_domain = '%s';") % (time_diff, domain)
+	msqlink1.execute(sql_set)
 
 # 添加domain_static表的credit字段
 def add_credit(msqlink1,msqlink2,domain):
 	ret = None
 	scoreDict = {"safe": 100, "unsure": 70}
-	sql = "SELECT evidence FROM domain_name WHERE primary_domain='%s';" % pd
-	rs = msqlink2.get(sql)
+	sql = "SELECT evidence FROM domain_name WHERE primary_domain='%s';" % domain
+	rs = msqlink2.query(sql,1)
 	if rs != None:
 		arr = rs.split("\"")[2:]
 		temp = None
@@ -202,41 +204,46 @@ def domain_static(msqlink1,msqlink2,domain):
 
 
 def newip(addr):
-	#建立数据库连接
-	known_m = db(host="211.65.193.23", user="root", passwd="admin246531",  db="known_malicious",port=3306)
-	dns_db = db(host="211.65.193.193", user="ipcis", passwd="", db="IPCIS_DNS_DB",port=3307)
+	try:
+		#建立数据库连接
+		known_m = db(host="211.65.193.23", user="root", passwd="admin246531",  db="known_malicious",port=3306)
+		dns_db = db(host="211.65.193.193", user="ipcis", passwd="", db="IPCIS_DNS_DB",port=3307)
 
-	#读取域名IP字典
-	domain2ip_contact=readIpdt(addr)
+		#读取域名IP字典
+		domain2ip_contact=readIpdt(addr)
 
-	#遍历字典
-	for domaindata,ipdata in domain2ip_contact.items(): 	
+		#遍历字典
+		for domaindata,ipdata in domain2ip_contact.items(): 	
+		
+			#填入域名IP记录
+			domain2ip(known_m,domaindata,ipdata[0])	
+			#填入域名主域名对应关系
+			primary2name(known_m,dns_db,domaindata)
 
-		# 填入域名静态信息
-		domain_static(known_m,dns_db,domaindata)
-	
-		#填入域名IP记录
-		domain2ip(known_m,domaindata,ipdata[0])	
+			#填domain_static
+			domain_static(known_m,dns_db,domaindata)
 
-		#填入域名主域名对应关系
-		primary2name(known_m,dns_db,domaindata)
+			today = datetime.date.today()
+			for d in range(14):
 
-		today = datetime.date.today()
-		for d in range(14):
+				date = today - datetime.timedelta(days=13-d)
+				#查询活动记录
+				outrec,inrec=search_ip_activity(ipdata[0],date)
+				rec=outrec+inrec
+				
+				#填入活动记录
+				ip_activity_record(known_m,outrec,inrec,date)
+				
+				#填活动记录次数
+				update_ip_activiy_count(known_m,ipdata[0],rec,date)
 
-			date = today - datetime.timedelta(days=13-d)
-			#查询活动记录
-			outrec,inrec=search_ip_activity(ipdata[0],date)
-			rec=outrec+inrec
-			
-			#填入活动记录
-			ip_activity_record(known_m,outrec,inrec)
-			
-			#填活动记录次数
-			update_ip_activiy_count(known_m,ipdata[0],rec)
+		known_m.close()
+		dns_db.close()
 
-	known_m.close()
-	dns_db.close()
+	except Exception as e:
+		return 0
+	else:
+		return 1
 
 
 def update_ip_activiy_record():
@@ -254,14 +261,14 @@ def update_ip_activiy_record():
 		rec=outrec+inrec
 		
 		#填入活动记录
-		ip_activity_record(known_m,outrec,inrec)
+		ip_activity_record(known_m,outrec,inrec,today)
 		
 		#填活动记录次数
 		update_ip_activiy_count(known_m,num2ip(ip[0]),rec)
 
 	known_m.close()
 	dns_db.close()
-
-if __name__=="__main__":
-
-	newip("testip.txt")
+	#自动化，每隔10S运行一次
+	global timer
+	timer=threading.Timer(10,update_ip_activiy_record)
+	timer.start()
