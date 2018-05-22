@@ -10,6 +10,8 @@ import 'iview/dist/styles/iview.css';
 Vue.config.productionTip = false
 Vue.use(iView)
 Vue.prototype.axios = axios
+Vue.prototype.bus = new Vue()
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 /* eslint-disable no-new */
 new Vue({

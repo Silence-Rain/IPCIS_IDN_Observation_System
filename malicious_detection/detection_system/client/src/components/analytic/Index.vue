@@ -49,7 +49,9 @@
                         </Breadcrumb>
                         <!-- 页面主体部分 -->
                         <Content class="content">
-                            <router-view/>
+                            <keep-alive>
+                                <router-view/>
+                            </keep-alive>
                         </Content>
                     </Layout>
                 </Content>
@@ -76,12 +78,16 @@
                     ["地理位置分布", "Map"]
                 ],
                 curPage: 0,
+                ips: []
             }
         },
 
         mounted () {
             this.targetDomain = this.$route.params.domain_name
             this.route(0)
+            this.bus.$on("upIp", (ips) => {
+                this.ips = ips
+            })
         },
 
         methods: {
@@ -90,7 +96,7 @@
                     this.curPage = name
                     this.$router.push({
                         name: this.pages[this.curPage][1],
-                        params: {"domain_name": this.targetDomain}
+                        params: {"domain_name": this.targetDomain, "ips": this.ips}
                     })
                 }
             }

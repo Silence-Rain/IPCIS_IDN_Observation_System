@@ -2,80 +2,87 @@
 	<div>
 		<div class="label">
 			<div>IP活动地理位置分布</div>
-			<Button type="primary" class="btn" @click="download">
-				<Icon type="ios-cloud-download" size="15" color="#fff"></Icon>
-				下载
-			</Button>
 		</div>
+		<hr color="#f5f7f9"/>
 		<keep-alive>
-			<div id="chart" style="width:600px;height:400px;"></div>
+			<div id="chart" style="width:650px;height:500px;"></div>
 		</keep-alive>
 	</div>
 </template>
 
 <script>
 	import inMap from "inmap/dist/inmap.min.js"
-	// import { MP } from '../js/map.js'
+	import { MP } from '../../js/map.js'
 
 	export default {
 		data () {
 			return {
-				acts: [
+				raw: [
 				{
 			        lng: 118.8028, 
 			        lat: 32.0647,
 			        ip: "202.112.23.167",
 			        location: "中国-江苏-南京",
-			        count: 25
+			        count: [25,12,21]
 				},
 				{
 			        lng: 112.95, 
 			        lat: 28.43,
-			        ip: "118.89.140.118",
+			        ip: 2449492302,
 			        location: "中国-湖南-长沙",
-			        count: 12
+			        count: [12,10,9]
 				},
 				{
 			        lng: 113.27, 
 			        lat: 21.13,
 			        ip: "192.168.1.1",
 			        location: "中国-江苏-南京",
-			        count: 18
+			        count: [18,42,24]
 				}
-				]
-
+				],
+				ips: []
 			}
 		},
 
+		computed: {
+			acts () {
+				let ret = []
+				for (var item of this.raw) {
+					let temp = item
+					temp["count"] = item.count.reduce((acc, val) => {
+						return acc + val 
+					})
+					temp["style"] = {size: Math.log2(temp.count) + 1}
+					temp["style"]["backgroundColor"] = (this.ips.indexOf(item.ip) == -1)
+						? "#FF8C00" : "#0F0"
+					ret.push(temp)
+				}
+				return ret
+			}
+		},
+
+		created () {
+			this.ips = this.$route.params.ips
+		},
+
 		mounted () {
-			this.$nextTick(function() {
-				let that = this
-				MP().then(BMap => {
-					that.mapInit(that.acts)
+			// this.$nextTick(function() {
+			// 	let that = this
+			// 	MP().then(BMap => {
+			// 		that.mapInit(that.acts)
+			// 	})
+			// })
+			this.axios.get("http://118.89.140.118:8888/location")
+				.then((response) => {
+					this.raw = response.data.result
 				})
-			})
-			//this.mapInit(this.acts)
+				.catch((response) => {
+					this.$Message.error("对方不想说话，所以等会再试吧")
+				})
+			this.mapInit(this.acts)
 		},
 
 		methods: {
-			download () {
-
-			},
-
-			//地图数据构造函数
-			mapData (lng, lat, ip, location, size) {
-				return {
-					lng: lng,
-					lat: lat,
-					ip: ip,
-					location: location,
-					style: {
-						backgroundColor: "#FF8C00",
-						size: (size >= 25) ? 13 : (size * 0.4)
-					}
-				}
-			},
-
 			//初始化地图
 			mapInit (data) {
 				let inmap = new inMap.Map({
@@ -83,7 +90,7 @@
 					skin: "Blueness",
 					center: [107.40, 33.42],
 					zoom: {
-						value: 2, 
+						value: 4, 
 						show: true, 
 						max: 10, 
 						min: 2
@@ -100,8 +107,7 @@
 						offsets: {
 							top: 15,
 							left: 15
-						},
-						customClass: "auto"
+						}
 					},
 					style: {
 						normal: {
@@ -123,23 +129,17 @@
 </script>
 
 <style scoped>
+hr{
+	width: 650px;
+	margin: 10px 0;
+	background-color: #f5f7f9;
+}
 .label{
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	width: 650px;
     margin: 10px;
     font-size: 16px;
-}
-.btn{
-	width: 70px;
-	height: 30px;
-	margin-left: 50px;
-	font-size: 12px;
-}
-.auto{
-	background-color: #778899;
-	border: 0;
-	border-radius: 5px;
-	color: #fff;
 }
 </style>

@@ -71,7 +71,10 @@
 	                    title: "IP活动量",
 	                    key: "count"
 	                }
-	            ]
+	            ],
+	            staticInfo: [],
+	            whoisInfo: [],
+	            ipInfo: []
 	        }
 		},
 
@@ -86,10 +89,12 @@
 					this.localLoading = false
 					this.staticInfo = [response.data.result.static]
 					this.ipInfo = response.data.result.ip
+
+					this.bus.$emit("upIp", this.getResolvedIPs())
 				})
 				.catch((response) => {
 					this.localLoading = false
-					this.$Message.error("对方不想说话，所以等会再试吧");
+					this.$Message.error("对方不想说话，所以等会再试吧")
 				})
 			this.axios.post("http://118.89.140.118:8888/info/remote", 
 				JSON.stringify({domain_name: this.targetDomain}))
@@ -99,8 +104,19 @@
 				})
 				.catch((response) => {
 					this.remoteLoading = false
-					this.$Message.error("对方不想说话，所以等会再试吧");
+					this.$Message.error("对方不想说话，所以等会再试吧")
 				})
+			
+		},
+
+		methods: {
+			getResolvedIPs () {
+				let ret = []
+				for (var item of this.ipInfo) {
+					ret.push(item.ip)
+				}
+				return ret
+			}
 		}
 	}
 </script>

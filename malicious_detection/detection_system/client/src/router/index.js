@@ -12,7 +12,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-    	path: "/known_list",
+    	path: "/",
     	name: "KnownList",
     	component: KnownList
     },
