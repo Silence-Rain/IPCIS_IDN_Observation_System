@@ -6,3 +6,4 @@ from handler import location
 from handler import active
 from handler import service
 from handler import domain_list
+from handler import get_image
