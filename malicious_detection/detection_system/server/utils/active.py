@@ -1,3 +1,5 @@
+import math
+
 # 格式化数据
 # 输入：[{
 #		"ip": ip, 
@@ -44,4 +46,19 @@ def active_calc(item):
 
 # 计算ip地理分布香农熵
 def shannon_entropy(geos):
-	return len(geos)
+	raw = [x.split("-")[0] for x in geos]
+	prob_raw = {}
+	for item in raw:
+		if item in prob_raw:
+			prob_raw[item] += 1
+		else:
+			prob_raw[item] = 1
+
+	total = len(raw)
+	prob = [x / total for x in prob_raw.values()]
+
+	entropy = 0
+	for item in prob:
+		entropy -= item * math.log2(item)
+
+	return round(entropy,6)

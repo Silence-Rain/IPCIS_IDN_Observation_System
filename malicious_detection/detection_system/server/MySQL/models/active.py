@@ -21,7 +21,7 @@ class ActiveModel(object):
 			temp = {"ip": str(IP(ip[0])), "count": ip[1], "opposite_ip": {}, "ip_geo": {}}
 
 			rs = await self.ipcis.query(
-				"SELECT ip_2,ip_2_lnglat,date FROM ip_activity_record WHERE ip_1=%s;" % ip[0])
+				"SELECT ip_2,ip_2_location,date FROM ip_activity_record WHERE ip_1=%s;" % ip[0])
 			for item in rs:
 				if item[2] not in temp["opposite_ip"]:
 					temp["opposite_ip"][item[2]] = [item[0]]

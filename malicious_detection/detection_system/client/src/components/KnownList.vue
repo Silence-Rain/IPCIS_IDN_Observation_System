@@ -102,7 +102,7 @@
 				})
 				.catch((response) => {
 					this.isLoading = false
-					this.$Message.error("对方不想说话，所以等会再试吧");
+					this.$Message.error("网络错误，请稍后再试！");
 				})
 		},
 		methods: {
@@ -147,7 +147,7 @@
 						}
 						else {
 							this.$Notice.error({
-								title: "添加新域名失败：数据库内部错误"
+								title: "添加新域名失败：数据库错误"
 							})
 						}
 					})
@@ -156,6 +156,9 @@
 		                    title: "添加新域名失败：网络错误"
 		                })
 					})
+				this.$Notice.warning({
+					title: "新域名已提交，请等待查询完成……"
+				})
 			}
 		}
 	}

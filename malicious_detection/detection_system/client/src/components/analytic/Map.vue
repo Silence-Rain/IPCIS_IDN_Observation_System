@@ -16,7 +16,7 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "ns2.hostkey.com",
+				targetDomain: "",
 				raw: [],
 				ips: []
 			}
@@ -46,13 +46,13 @@
 
 		mounted () {
 			this.axios.get(this.testUrl + "/location", 
-				{params: {domain_name: "ns2.hostkey.com"}})
+				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
 					this.raw = response.data.result
 					this.mapInit(this.acts)
 				})
 				.catch((response) => {
-					this.$Message.error("对方不想说话，所以等会再试吧")
+					this.$Message.error("网络错误，请稍后再试！")
 				})
 		},
 

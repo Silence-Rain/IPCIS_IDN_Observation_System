@@ -15,7 +15,7 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "ns2.hostkey.com",
+				targetDomain: "",
 				localLoading: false,
 				remoteLoading: false,
 	            staticCol: [
@@ -102,7 +102,7 @@
 				})
 				.catch((response) => {
 					this.localLoading = false
-					this.$Message.error("对方不想说话，所以等会再试吧")
+					this.$Message.error("网络错误，请稍后再试！")
 				})
 			this.axios.post(this.testUrl + "/info/remote", 
 				JSON.stringify({domain_name: this.targetDomain}))
@@ -112,7 +112,7 @@
 				})
 				.catch((response) => {
 					this.remoteLoading = false
-					this.$Message.error("对方不想说话，所以等会再试吧")
+					this.$Message.error("网络错误，请稍后再试！")
 				})
 			
 		},

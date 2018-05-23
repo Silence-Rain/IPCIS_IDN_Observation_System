@@ -18,6 +18,10 @@
                 <!-- 侧边栏 -->
                 <Sider hide-trigger style="background:#fff;">
                     <Menu active-name="0" theme="light" width="auto" @on-select="route">
+                        <MenuItem name="4">
+                            <Icon type="ios-list"></Icon>
+                            已知恶意域名列表
+                        </MenuItem>
                         <MenuItem name="0">
                             <Icon type="ios-information"></Icon>
                             概览
@@ -70,7 +74,7 @@
     export default {
         data () {
             return {
-                targetDomain: "ns2.hostkey.com",
+                targetDomain: "",
                 pages: [
                     ["概览", "Info"], 
                     ["IP地址通信活动关系", "Relation"],
@@ -92,7 +96,12 @@
 
         methods: {
             route (name) {
-                if (name >= 0) {
+                if (name == 4) {
+                    this.$router.push({
+                        name: "KnownList"
+                    })
+                }
+                else if (name >= 0) {
                     this.curPage = name
                     this.$router.push({
                         name: this.pages[this.curPage][1],

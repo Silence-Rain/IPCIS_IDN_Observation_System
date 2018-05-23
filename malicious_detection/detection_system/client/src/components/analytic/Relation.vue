@@ -23,7 +23,7 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "ns2.hostkey.com",
+				targetDomain: "",
 				ips: [],
 				steady: {},
 				max: {},
@@ -85,7 +85,7 @@
 				})
 				.catch((response) => {
 					this.chartSteady.hideLoading()
-					this.$Message.error("对方不想说话，所以等会再试吧");
+					this.$Message.error("网络错误，请稍后再试！");
 				})
 
 			this.chartMax.showLoading()
@@ -104,7 +104,7 @@
 				})
 				.catch((response) => {
 					this.chartMax.hideLoading()
-					this.$Message.error("对方不想说话，所以等会再试吧");
+					this.$Message.error("网络错误，请稍后再试！");
 				})
 		},
 

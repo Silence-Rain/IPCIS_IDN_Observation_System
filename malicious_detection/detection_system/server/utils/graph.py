@@ -71,14 +71,14 @@ def steady_topo(data):
 	intersect = set()
 	# 对每天的ip活动取交集
 	for index, date in enumerate(dic.keys()):
-		# 判断当前日期是否已经作为key
+		temp = set()
 		for item in dic[date]:
-			if index == 0:
-				intersect.add(tuple(item))
-			else:
-				temp = set()
-				temp.add(tuple(item))
-				intersect = intersect & temp
+			temp.add(tuple(item))
+			
+		if index == 0:
+			intersect.update(temp)
+		else:
+			intersect = intersect & temp
 
 	# 计算交集节点集合
 	node_set = set()
@@ -98,14 +98,14 @@ def max_topo(data):
 	union = set()
 	# 对每天的ip活动取并集
 	for index, date in enumerate(dic.keys()):
-		# 判断当前日期是否已经作为key
+		temp = set()
 		for item in dic[date]:
-			if index == 0:
-				union.add(tuple(item))
-			else:
-				temp = set()
-				temp.add(tuple(item))
-				union = union | temp
+			temp.add(tuple(item))
+
+		if index == 0:
+			union.update(temp)
+		else:
+			union = union | temp
 
 	# 计算并集节点集合
 	node_set = set()

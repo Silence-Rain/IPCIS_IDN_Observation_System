@@ -26,7 +26,7 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "ns2.hostkey.com",
+				targetDomain: "",
 				raw: [],
 				countChart: null,
 				ipChart: null,
@@ -73,7 +73,7 @@
 			this.entropyChart.showLoading()
 
 			this.axios.get(this.testUrl + "/active", 
-				{params: {domain_name: "ns2.hostkey.com"}})
+				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
 					this.countChart.hideLoading()
 					this.ipChart.hideLoading()
@@ -100,7 +100,7 @@
 					this.ipChart.hideLoading()
 					this.entropyChart.hideLoading()
 					
-					this.$Message.error("对方不想说话，所以等会再试吧")
+					this.$Message.error("网络错误，请稍后再试！")
 				})
 		},
 
@@ -114,7 +114,8 @@
 					data.push({
 						name: item.ip,
 						type: 'line',
-						data: item[key]
+						data: item[key],
+						smooth: true
 					})
 				}
 
