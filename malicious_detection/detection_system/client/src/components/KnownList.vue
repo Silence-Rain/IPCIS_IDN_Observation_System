@@ -135,8 +135,27 @@
 			},
 
 			addDomain () {
-				this.rawList.push(this.formatter(this.newDomain))
 				//TODO: 此时开始自动化富化信息
+				this.axios.post(this.testUrl.slice(0,-1)+"9/enrich", 
+					JSON.stringify({domain_name: this.newDomain}))
+					.then((response) => {
+						if (response.data.result) {
+							this.rawList.push(this.formatter(this.newDomain))
+							this.$Notice.success({
+								title: "添加新域名成功！"
+							})
+						}
+						else {
+							this.$Notice.error({
+								title: "添加新域名失败：数据库内部错误"
+							})
+						}
+					})
+					.catch((response) => {
+						this.$Notice.error({
+		                    title: "添加新域名失败：网络错误"
+		                })
+					})
 			}
 		}
 	}
