@@ -1,8 +1,7 @@
 #!coding=utf8
 
 import pymysql
-import time
-import sched
+from apscheduler.schedulers.background import BackgroundScheduler
 
 class MySQL(object):
 	def __init__(self, host, user, passwd, db, port=3306, charset='utf8'):
@@ -13,6 +12,7 @@ class MySQL(object):
 		self.port = port
 		self.charset = charset
 		self.connect()
+		self.refresh()
 
 	async def get(self, sql):
 		self.cursor.execute(sql)
@@ -41,10 +41,11 @@ class MySQL(object):
 		self.cursor = self.conn.cursor()
 
 	def refresh(self):
-		self.close()
-		s = sched.scheduler(time.time, time.sleep)
-		s.enter(28000, self.connect)
-		s.run()
+		s = BackgroundScheduler()
+		s.add_job(self.close, 'interval', seconds=28000)
+		s.add_job(self.connect, 'interval', seconds=28000)
+
+		s.start()
 
 	def close(self):
 		self.cursor.close()
