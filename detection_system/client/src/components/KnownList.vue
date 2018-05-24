@@ -92,8 +92,11 @@
 			}
 		},
 		mounted () {
+
+			localStorage.clear()
+
 			this.isLoading = true
-			this.axios.get(this.testUrl + "/list")
+			this.axios.get(this.baseUrl + "/list")
 				.then((response) => {
 					this.isLoading = false
 					for (var item of response.data.result) {
@@ -136,7 +139,7 @@
 
 			addDomain () {
 				//TODO: 此时开始自动化富化信息
-				this.axios.post(this.testUrl.slice(0,-1)+"9/enrich", 
+				this.axios.post(this.baseUrl.slice(0,-1)+"9/enrich", 
 					JSON.stringify({domain_name: this.newDomain}))
 					.then((response) => {
 						if (response.data.result) {

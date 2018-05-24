@@ -79,14 +79,14 @@
 		},
 
 		created () {
-			this.targetDomain = this.$route.params.domain_name
+			this.targetDomain = localStorage.getItem("domain")
 		},
 
 		mounted () {
 			this.localLoading = true
 			this.remoteLoading = true
 
-			this.axios.post(this.testUrl + "/info/local", 
+			this.axios.post(this.baseUrl + "/info/local", 
 				JSON.stringify({domain_name: this.targetDomain}))
 				.then((response) => {
 					this.localLoading = false
@@ -98,13 +98,13 @@
 						})
 					}
 
-					this.bus.$emit("upIp", this.getResolvedIPs())
+					this.bus.$emit("resolved_ips", this.getResolvedIPs())
 				})
 				.catch((response) => {
 					this.localLoading = false
 					this.$Message.error("网络错误，请稍后再试！")
 				})
-			this.axios.post(this.testUrl + "/info/remote", 
+			this.axios.post(this.baseUrl + "/info/remote", 
 				JSON.stringify({domain_name: this.targetDomain}))
 				.then((response) => {
 					this.remoteLoading = false

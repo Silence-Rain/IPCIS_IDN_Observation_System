@@ -41,11 +41,11 @@
 
 		created () {
 			this.ips = this.$route.params.ips
-			this.targetDomain = this.$route.params.domain_name
+			this.targetDomain = localStorage.getItem("domain")
 		},
 
 		mounted () {
-			this.axios.get(this.testUrl + "/location", 
+			this.axios.get(this.baseUrl + "/location", 
 				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
 					this.raw = response.data.result

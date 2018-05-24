@@ -47,7 +47,7 @@
 		},
 
 		created () {
-			this.targetDomain = this.$route.params.domain_name
+			this.targetDomain = localStorage.getItem("domain")
 		},
 
 		activated () {
@@ -72,7 +72,7 @@
 			this.ipChart.showLoading()
 			this.entropyChart.showLoading()
 
-			this.axios.get(this.testUrl + "/active", 
+			this.axios.get(this.baseUrl + "/active", 
 				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
 					this.countChart.hideLoading()

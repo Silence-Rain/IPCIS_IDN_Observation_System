@@ -50,8 +50,8 @@
 		},
 
 		created () {
-			this.ips = this.$route.params.ips
-			this.targetDomain = this.$route.params.domain_name
+			this.ips = JSON.parse(localStorage.getItem("ips"))
+			this.targetDomain = localStorage.getItem("domain")
 		},
 
 		activated () {
@@ -70,7 +70,7 @@
 			this.chartMax = echarts.init(document.getElementById("chartMax"))
 
 			this.chartSteady.showLoading()
-			this.axios.get(this.testUrl + "/topo/steady", 
+			this.axios.get(this.baseUrl + "/topo/steady", 
 				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
 					this.chartSteady.hideLoading()
@@ -85,11 +85,12 @@
 				})
 				.catch((response) => {
 					this.chartSteady.hideLoading()
-					this.$Message.error("网络错误，请稍后再试！");
+					this.$Message.error("网络错误，请稍后再试！")
+					console.log(response)
 				})
 
 			this.chartMax.showLoading()
-			this.axios.get(this.testUrl + "/topo/max", 
+			this.axios.get(this.baseUrl + "/topo/max", 
 				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
 					this.chartMax.hideLoading()
@@ -104,7 +105,8 @@
 				})
 				.catch((response) => {
 					this.chartMax.hideLoading()
-					this.$Message.error("网络错误，请稍后再试！");
+					this.$Message.error("网络错误，请稍后再试！")
+					console.log(response)
 				})
 		},
 
