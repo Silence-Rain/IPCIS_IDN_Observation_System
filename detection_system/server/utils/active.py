@@ -45,9 +45,12 @@ def active_calc(item):
 	return 60
 
 # 计算ip地理分布香农熵
+# 根据ip所属的国家，计算分布概率
 def shannon_entropy(geos):
+	# 从地理归属字段中截取国家部分
 	raw = [x.split("-")[0] for x in geos]
 	prob_raw = {}
+	# 计算各个国家的频数
 	for item in raw:
 		if item in prob_raw:
 			prob_raw[item] += 1
@@ -55,9 +58,11 @@ def shannon_entropy(geos):
 			prob_raw[item] = 1
 
 	total = len(raw)
+	# 计算各个国家分布概率
 	prob = [x / total for x in prob_raw.values()]
 
 	entropy = 0
+	# 香农熵 = - SUM( P(x) * log2(P(x)) )
 	for item in prob:
 		entropy -= item * math.log2(item)
 

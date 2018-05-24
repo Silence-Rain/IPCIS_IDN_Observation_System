@@ -1,0 +1,1 @@
+{  "name": "IPCIS恶意域名检测系统 后端API文档",  "version": "1.0.0",  "description": "IPCIS下属的恶意域名检测系统",  "title": "IPCIS恶意域名检测系统",  "sampleUrl": false,  "defaultVersion": "0.0.0",  "apidoc": "0.3.0",  "generator": {    "name": "apidoc",    "time": "2018-05-24T15:50:12.299Z",    "url": "http://apidocjs.com",    "version": "0.17.6"  }}

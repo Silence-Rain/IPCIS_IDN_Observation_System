@@ -40,6 +40,7 @@ class MySQL(object):
 						)
 		self.cursor = self.conn.cursor()
 
+	# 每隔28000s，自动刷新连接（针对IPCIS_DNS_DB库）
 	def refresh(self):
 		s = BackgroundScheduler()
 		s.add_job(self.close, 'interval', seconds=28000)
