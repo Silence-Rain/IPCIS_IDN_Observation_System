@@ -26,15 +26,16 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "",
-				raw: [],
-				countChart: null,
-				ipChart: null,
-				entropyChart: null
+				targetDomain: "",			// 要查询的目标域名
+				raw: [],					// 原始解析IP活动数据
+				countChart: null,			// 活动量趋势echarts对象
+				ipChart: null,				// 对端IP数量趋势echarts对象
+				entropyChart: null			// 对端IP地理分布熵趋势echarts对象
 			}
 		},
 
 		computed: {
+			// 计算从今天到14天前的日期，作为x轴下标
 			timeLabels () {
 				let cur = Date.parse(new Date())
 				let ret = []
@@ -47,16 +48,19 @@
 		},
 
 		created () {
+			// 从localStorage中获取目标域名
 			this.targetDomain = localStorage.getItem("domain")
 		},
 
 		activated () {
+			// 页面重新激活时，响应式调整图的尺寸
 			this.countChart.resize()
 			this.ipChart.resize()
 			this.entropyChart.resize()
 		},
 
 		mounted () {
+			// 导入echarts库和组件
 			let echarts = require("echarts/lib/echarts")
 			require('echarts/lib/chart/line')
 			require('echarts/lib/component/legend')
@@ -64,14 +68,15 @@
 			require('echarts/lib/component/toolbox')
 			require('echarts/lib/component/title')
 
+			// 初始化echarts对象
 			this.countChart = echarts.init(document.getElementById("count_chart"))
 			this.ipChart = echarts.init(document.getElementById("ip_chart"))
 			this.entropyChart = echarts.init(document.getElementById("entropy_chart"))
 
+			// 请求解析IP活动数据
 			this.countChart.showLoading()
 			this.ipChart.showLoading()
 			this.entropyChart.showLoading()
-
 			this.axios.get(this.baseUrl + "/active", 
 				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
@@ -81,14 +86,15 @@
 
 					this.raw = response.data.result
 
+					// 设置趋势图
 					let countOption = this.graphInit("IP活动量趋势", this.raw, "count")
 					let ipOption = this.graphInit("对端IP数量趋势", this.raw, "opposite_ip_count")
 					let entropyOption = this.graphInit("对端IP地理分布熵趋势", this.raw, "ip_geo")
-
 					this.countChart.setOption(countOption)
 					this.ipChart.setOption(ipOption)
 					this.entropyChart.setOption(entropyOption)
 
+					// 实现响应式调整尺寸
 					window.addEventListener("resize", () => {
 						this.countChart.resize()
 						this.ipChart.resize()
@@ -105,10 +111,11 @@
 		},
 
 		methods: {
+			// 初始化趋势折线图
 			graphInit (title, raw, key) {
 				let labels = []
 				let data = []
-
+				// 从原始数据中取出key对应的维度
 				for (var item of raw) {
 					labels.push(item.ip)
 					data.push({
@@ -123,6 +130,7 @@
 					title: {
 						text: title
 					},
+					// 提示气泡
 					tooltip : {
 						trigger: 'axis',
 						axisPointer: {
@@ -132,6 +140,7 @@
 							}
 						}
 					},
+					// 图例
 					legend: {
 						data: labels,
 						top: "2%"
@@ -142,6 +151,7 @@
 						bottom: '3%',
 						containLabel: true
 					},
+					// 下载图片按钮
 					toolbox: {
 						feature: {
 							saveAsImage: {}

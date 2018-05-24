@@ -16,23 +16,29 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "",
-				raw: [],
-				ips: []
+				targetDomain: "",			// 要查询的目标域名
+				ips: [],					// 目标域名解析IP列表
+				raw: []						// 原始IP活动数据
+				
 			}
 		},
 
 		computed: {
+			// 按照inMap要求，格式化后的IP活动数据
 			acts () {
 				let ret = []
 				for (var item of this.raw) {
 					let temp = item
+					// 累加IP活动数
 					temp["count"] = item.count.reduce((acc, val) => {
 						return acc + val 
 					})
+					// 根据IP活动量设置节点大小
 					temp["style"] = {size: Math.log2(temp.count) + 1}
+					// 解析IP和对端IP标注不同颜色
 					temp["style"]["backgroundColor"] = (this.ips.indexOf(item.ip) == -1)
 						? "#FF8C00" : "#0F0"
+
 					ret.push(temp)
 				}
 				return ret
@@ -40,15 +46,18 @@
 		},
 
 		created () {
-			this.ips = this.$route.params.ips
+			// 从localStorage中获取目标域名和解析IP列表
+			this.ips = JSON.parse(localStorage.getItem("ips"))
 			this.targetDomain = localStorage.getItem("domain")
 		},
 
 		mounted () {
+			// 请求解析IP活动
 			this.axios.get(this.baseUrl + "/location", 
 				{params: {domain_name: this.targetDomain}})
 				.then((response) => {
 					this.raw = response.data.result
+					// 得到数据后初始化地图
 					this.mapInit(this.acts)
 				})
 				.catch((response) => {
@@ -62,7 +71,9 @@
 				let inmap = new inMap.Map({
 					id: "chart",
 					skin: "Blueness",
+					// 初始地图中心
 					center: [107.40, 33.42],
+					// 缩放
 					zoom: {
 						value: 3, 
 						show: true, 
@@ -71,6 +82,7 @@
 					}
 				})
 				let overlay = new inMap.DotOverlay({
+					// 气泡提示
 					tooltip: {
 						show: true,
 						formatter: (params) => {

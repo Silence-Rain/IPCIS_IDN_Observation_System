@@ -31,6 +31,8 @@
 					</Modal>
 				</Content>
 			</Layout>
+
+			<!-- 底部footer -->
 			<Footer class="footer">
 				<div>
 					2018 &copy; Silence-Rain<span>联系方式：daniel.s.mo503@gmail.com</span>
@@ -44,11 +46,12 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "",
-				isLoading: false,
-				curPage: 1,
-				newDomain: "",
-				showAddModal: false,
+				targetDomain: "",			// 要查询的目标域名
+				isLoading: false,			// 表格loading状态
+				curPage: 1,					// 当前页数
+				newDomain: "",				// 新增域名
+				showAddModal: false,		// 新增域名对话框显示状态
+				rawList: [],				// 所有已知恶意域名列表
 				tableHeader: [
 					{
 						title: "域名",
@@ -62,14 +65,17 @@
 						title: "预测服务类型",
 						key: "service"
 					}
-				],
-				rawList: []
+				]
 			}
 		},
 		computed: {
+			// 已知恶意域名列表长度
 			length () {
 				return this.rawList.length
 			},
+			// 当前显示的内容
+			// 根据选择的页数展示20条记录
+			// 根据搜索框中内容，正则匹配查询结果
 			list () {
 				if (this.targetDomain == "") {
 					return this.rawList.slice((this.curPage - 1) * 20, this.curPage * 20)
@@ -92,9 +98,9 @@
 			}
 		},
 		mounted () {
-
 			localStorage.clear()
 
+			// 请求已知恶意域名列表
 			this.isLoading = true
 			this.axios.get(this.baseUrl + "/list")
 				.then((response) => {
@@ -109,6 +115,7 @@
 				})
 		},
 		methods: {
+			// 重定向页面至所选择域名的详细信息
 			redirectTo (data, index) {
 				this.$router.push({
 					name: "Analytic", 
@@ -116,6 +123,7 @@
 				})
 			},
 
+			// 数据格式化
 			formatter (domain, active = null, service = null) {
 				return {
 					"domain_name": domain,
@@ -124,6 +132,7 @@
 				}
 			},
 
+			// 正则匹配。使用src作为模板测试dst
 			regMatch (src, dst) {
 				let pat = new RegExp(src)
 				return pat.test(dst)
@@ -137,17 +146,19 @@
 				this.showAddModal = true
 			},
 
+			// 提交新的恶意域名，后端开始对新域名进行背景信息富化
 			addDomain () {
-				//TODO: 此时开始自动化富化信息
 				this.axios.post(this.baseUrl.slice(0,-1)+"9/enrich", 
 					JSON.stringify({domain_name: this.newDomain}))
 					.then((response) => {
+						// 后端信息富化完成
 						if (response.data.result) {
 							this.rawList.push(this.formatter(this.newDomain))
 							this.$Notice.success({
 								title: "添加新域名成功！"
 							})
 						}
+						// 后端信息富化失败
 						else {
 							this.$Notice.error({
 								title: "添加新域名失败：数据库错误"
@@ -156,9 +167,10 @@
 					})
 					.catch((response) => {
 						this.$Notice.error({
-		                    title: "添加新域名失败：网络错误"
-		                })
+							title: "添加新域名失败：网络错误"
+						})
 					})
+				// 提交后等待后端完成富化
 				this.$Notice.warning({
 					title: "新域名已提交，请等待查询完成……"
 				})

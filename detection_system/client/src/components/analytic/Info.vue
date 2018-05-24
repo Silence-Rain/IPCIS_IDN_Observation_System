@@ -15,9 +15,12 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "",
-				localLoading: false,
-				remoteLoading: false,
+				targetDomain: "",			// 要查询的目标域名
+				localLoading: false,		// 基本信息表loading状态
+				remoteLoading: false,		// whois信息表loading状态
+	            staticInfo: [],				// 域名基本信息
+	            whoisInfo: [],				// 域名whois归属信息
+	            ipInfo: [],					// 域名解析IP信息
 	            staticCol: [
 	                {
 	                    title: "是否DGA",
@@ -71,39 +74,39 @@
 	                    title: "IP活动量（14天总计）",
 	                    key: "count"
 	                }
-	            ],
-	            staticInfo: [],
-	            whoisInfo: [],
-	            ipInfo: []
+	            ]
 	        }
 		},
 
 		created () {
+			// 从localStorage中获取目标域名
 			this.targetDomain = localStorage.getItem("domain")
 		},
 
 		mounted () {
+			// 请求域名基本信息
 			this.localLoading = true
-			this.remoteLoading = true
-
 			this.axios.post(this.baseUrl + "/info/local", 
 				JSON.stringify({domain_name: this.targetDomain}))
 				.then((response) => {
 					this.localLoading = false
 					this.staticInfo = [response.data.result.static]
 					this.ipInfo = response.data.result.ip
+					// 累加解析IP活动数
 					for (var item of this.ipInfo) {
 						item.count = item.count.reduce((acc, val) => {
 							return acc + val
 						})
 					}
-
+					// 向父组件Index发布域名解析IP事件，更新父组件中解析IP列表
 					this.bus.$emit("resolved_ips", this.getResolvedIPs())
 				})
 				.catch((response) => {
 					this.localLoading = false
 					this.$Message.error("网络错误，请稍后再试！")
 				})
+			// 请求域名whois信息
+			this.remoteLoading = true
 			this.axios.post(this.baseUrl + "/info/remote", 
 				JSON.stringify({domain_name: this.targetDomain}))
 				.then((response) => {
@@ -118,6 +121,7 @@
 		},
 
 		methods: {
+			// 获取解析IP列表
 			getResolvedIPs () {
 				let ret = []
 				for (var item of this.ipInfo) {

@@ -44,15 +44,16 @@
 					</Menu>
 				</Sider>
 
-				
+				<!-- 页面主体部分 -->
 				<Content class="content">
 					<Layout>
 						<Breadcrumb class="current-target">
 							<BreadcrumbItem>{{targetDomain}}</BreadcrumbItem>
-							<BreadcrumbItem>{{pages[curPage][0]}}</BreadcrumbItem>
+							<BreadcrumbItem>{{pages[curModule][0]}}</BreadcrumbItem>
 						</Breadcrumb>
-						<!-- 页面主体部分 -->
+
 						<Content class="content">
+							<!-- 此处是各个模块组件的容器，实现切换 -->
 							<keep-alive>
 								<router-view/>
 							</keep-alive>
@@ -60,6 +61,8 @@
 					</Layout>
 				</Content>
 			</Layout>
+
+			<!-- 底部footer -->
 			<Footer class="footer">
 				<div>
 					2018 &copy; Silence-Rain<span>联系方式：daniel.s.mo503@gmail.com</span>
@@ -74,25 +77,29 @@
 	export default {
 		data () {
 			return {
-				targetDomain: "",
-				pages: [
+				targetDomain: "",			// 要查询的目标域名
+				ips: [],					// 目标域名解析IP列表
+				curModule: 0,				// 当前选中的模块
+				pages: [					// 组件和模块名映射
 					["概览", "Info"], 
 					["IP地址通信活动关系", "Relation"],
 					["域名活跃度", "Trend"], 
 					["IP地理位置分布", "Map"]
-				],
-				curPage: 0,
-				ips: []
+				]
 			}
 		},
 
 		mounted () {
+			// 从localStorage中获取目标域名
+			// 若localStorage中不存在，则根据上个页面路由中传递的参数设置目标域名
 			this.targetDomain = localStorage.getItem("domain")
 			if (this.targetDomain == null) {
 				this.targetDomain = this.$route.params.domain_name
 				localStorage.setItem("domain", this.targetDomain)
 			}
+			// 默认路由到“概览”模块
 			this.route(0)
+			// 监听子组件“概览”模块发送的域名解析IP事件，并更新自身数据和localStorage
 			this.bus.$on("resolved_ips", (ips) => {
 				this.ips = localStorage.getItem("ips")
 				if (this.ips == null) {
@@ -103,17 +110,20 @@
 		},
 
 		methods: {
+			// 切换模块的路由函数
 			route (name) {
+				// 切换到“已知域名列表”模块之前，清空localStorage
 				if (name == 4) {
 					localStorage.clear()
 					this.$router.push({
 						name: "KnownList"
 					})
 				}
+				// 切换到其他模块时，将目标域名和解析IP作为路由参数传递
 				else if (name >= 0) {
-					this.curPage = name
+					this.curModule = name
 					this.$router.push({
-						name: this.pages[this.curPage][1],
+						name: this.pages[this.curModule][1],
 						params: {"domain_name": this.targetDomain, "ips": this.ips}
 					})
 				}
