@@ -1,7 +1,7 @@
 {
-  "name": "ipcis_track",
+  "name": "ipcis_malicious_detection",
   "version": "1.0.0",
-  "description": "A module of IPCIS. Tracks and provides detail info of malicious domains",
+  "description": "A malicious domains detection system included by IPCIS",
   "author": "Silence <daniel.s.mo503@gmail.com>",
   "private": true,
   "scripts": {
