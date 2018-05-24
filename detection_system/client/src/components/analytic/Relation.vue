@@ -79,6 +79,12 @@
 					let optionSteady = this.graphInit(this.steady)
 					this.chartSteady.setOption(optionSteady)
 
+					setTimeout(() => {
+						var img = this.chartSteady.getDataURL()
+						this.axios.post(this.baseUrl + "/saveImage",
+							JSON.stringify({img: img}))
+					}, 1000)
+					
 					window.addEventListener("resize", () => {
 						this.chartSteady.resize()
 					})
@@ -98,6 +104,12 @@
 					this.max = response.data.result
 					let option = this.graphInit(this.max)
 					this.chartMax.setOption(option)
+
+					setTimeout(() => {
+						var img = this.chartSteady.getDataURL()
+						this.axios.post(this.baseUrl + "/saveImage",
+							JSON.stringify({img: img}))
+					}, 1000)
 
 					window.addEventListener("resize", () => {
 						this.chartMax.resize()

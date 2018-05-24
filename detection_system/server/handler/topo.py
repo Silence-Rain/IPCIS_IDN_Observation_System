@@ -3,7 +3,7 @@
 from handler.base import BaseHandler
 from handler.exceptions import *
 import routes
-from utils.graph import *
+from utils.topo import *
 
 class TopoSteadyHandler(BaseHandler):
 
