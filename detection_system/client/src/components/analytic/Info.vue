@@ -71,8 +71,8 @@
 	                    key: "location"
 	                },
 	                {
-	                    title: "IP活动量（14天总计）",
-	                    key: "count"
+	                    title: "DNS服务器",
+	                    key: "dns"
 	                }
 	            ]
 	        }
@@ -92,12 +92,6 @@
 					this.localLoading = false
 					this.staticInfo = [response.data.result.static]
 					this.ipInfo = response.data.result.ip
-					// 累加解析IP活动数
-					for (var item of this.ipInfo) {
-						item.count = item.count.reduce((acc, val) => {
-							return acc + val
-						})
-					}
 					// 向父组件Index发布域名解析IP事件，更新父组件中解析IP列表
 					this.bus.$emit("resolved_ips", this.getResolvedIPs())
 				})

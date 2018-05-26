@@ -17,10 +17,10 @@ class InfoModel(object):
 	def ip_formatter(self, raw):
 		ret = []
 		for item in raw:
-			temp = {"ip":"", "location":"", "count":[]}
+			temp = {"ip":"", "location":"", "dns":""}
 			temp["ip"] = str(IP(item[0]))
 			temp["location"] = item[1]
-			temp["count"] = eval(item[2])
+			temp["dns"] = str(IP(item[2]))
 			ret.append(temp)
 
 		return ret
@@ -47,7 +47,7 @@ class InfoModel(object):
 		rs_static = await self.ipcis.get(
 			"SELECT is_dga,ttl,credit FROM domain_static WHERE primary_domain='%s';" % pd)	
 		rs_ip = await self.ipcis.query(
-			"SELECT ip_1,ip_1_location,ip_activity FROM domain2ip WHERE domain_name='%s';" % domain)
+			"SELECT ip_1,ip_1_location,dns FROM domain2ip WHERE domain_name='%s';" % domain)
 		ret = {}
 		ret["domain_name"] = domain
 		ret["static"] = self.basic_formatter(rs_static, ["is_dga","ttl","credit"])

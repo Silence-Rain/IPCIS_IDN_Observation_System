@@ -30,7 +30,7 @@ class InfoIPCISHandler(BaseHandler):
 			        {
 			            "ip": "118.89.140.118",
 			            "location": "中国-上海-上海",
-			            "count": [100, 50...]
+			            "dns": "8.8.8.8"
 			        }
 			    ]
 			}

@@ -5,27 +5,27 @@ import io
 import time
 import threading
 import pymysql
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
-class db():
+class db(object):
 	def __init__(self, host, user, passwd, db, port=3306, charset='utf8'):
-		self.conn = pymysql.connect(
-						host = host, 
-						port = port, 
-						user = user,
-						passwd = passwd,
-						db = db,
-						charset = charset
-						)
-		self.cursor = self.conn.cursor()
+		self.host = host
+		self.user = user
+		self.passwd = passwd
+		self.db = db
+		self.port = port
+		self.charset = charset
+		self.connect()
+		self.refresh()
 
-	async def query(self, sql, mode=0):
+	async def get(self, sql):
 		self.cursor.execute(sql)
+		return self.cursor.fetchone()
 
-		if mode == 0:
-			return self.cursor.fetchall()
-		else:
-			return self.cursor.fetchone()
+	async def query(self, sql):
+		self.cursor.execute(sql)
+		return self.cursor.fetchall()
 
 	async def execute(self, sql):
 		try:
@@ -33,6 +33,25 @@ class db():
 			self.conn.commit()
 		except Exception as e:
 			self.conn.rollback()
+
+	def connect(self):
+		self.conn = pymysql.connect(
+						host = self.host, 
+						port = self.port, 
+						user = self.user,
+						passwd = self.passwd,
+						db = self.db,
+						charset = self.charset
+						)
+		self.cursor = self.conn.cursor()
+
+	# 每隔28000s，自动刷新连接（针对IPCIS_DNS_DB库）
+	def refresh(self):
+		s = BackgroundScheduler()
+		s.add_job(self.close, 'interval', seconds=28000)
+		s.add_job(self.connect, 'interval', seconds=28000)
+
+		s.start()
 
 	def close(self):
 		self.cursor.close()

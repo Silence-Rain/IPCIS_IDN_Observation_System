@@ -55,14 +55,23 @@
 				tableHeader: [
 					{
 						title: "域名",
-						key: "domain_name"
+						key: "domain_name",
+						render: (h, params) => {
+                            return h('div', [
+                                h('a', {
+                                	style: {
+                                		textDecoration: "underline"
+                                	}
+                                }, params.row.domain_name)
+                            ])
+                        }
 					},
 					{
 						title: "活跃度",
 						key: "active"
 					},
 					{
-						title: "预测服务类型",
+						title: "服务类型",
 						key: "service"
 					}
 				]
@@ -99,7 +108,7 @@
 		},
 		mounted () {
 			localStorage.clear()
-
+			
 			// 请求已知恶意域名列表
 			this.isLoading = true
 			this.axios.get(this.baseUrl + "/list")
@@ -180,6 +189,10 @@
 </script>
 
 <style scoped>
+.ivu-table .a{
+	font-style: underline;
+	color: #72ACE3
+}
 .layout{
 	border: 1px solid #d7dde4;
 	background: #f5f7f9;
