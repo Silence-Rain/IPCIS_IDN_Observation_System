@@ -65,20 +65,23 @@ def link_constructor(nodes, links):
 	return ret
 
 # 获取ip活动的稳定拓扑结构
-def steady_topo(data):
+def steady_topo(data, days):
 	dic = raw2date_dict(data)		# 日期-ip活动字典
 	count_map = raw2count(data)		# ip-活动量字典
-	intersect = set()
+	raw = {}
 	# 对每天的ip活动取交集
 	for index, date in enumerate(dic.keys()):
-		temp = set()
 		for item in dic[date]:
-			temp.add(tuple(item))
-			
-		if index == 0:
-			intersect.update(temp)
-		else:
-			intersect = intersect & temp
+			if str(item) not in raw:
+				raw[str(item)] = 1
+			else:
+				raw[str(item)] += 1
+
+	# 若一对活动出现次数大于等于days，算入稳定拓扑
+	intersect = set()
+	for key, value in raw.items():
+		if value >= days:
+			intersect.add(eval(key))
 
 	# 计算交集节点集合
 	node_set = set()

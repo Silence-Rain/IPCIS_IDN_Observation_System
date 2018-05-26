@@ -1,9 +1,13 @@
 <template>
 	<div>
 		<div class="label">
-			<Select v-model="selectIndex" style="width:120px;" @on-change="selectChange">
+			<Select v-model="selectIndex" style="width:100px;" @on-change="selectChange">
 				<Option v-for="item in graphLabel" :value="item.value" :key="item.value">{{ item.label }}</Option>
 			</Select>
+			<div class="subtitle">稳定拓扑阈值天数：</div>
+			<div class="slider">
+				<Slider v-show="showIndex" v-model="steadyDays" :min="0" :max="14" @on-change="slideChange" show-stops show-input></Slider>
+			</div>
 		</div>
 		<hr color="#f5f7f9"/>
 		<!-- 根据选择框内容展示稳定/最大拓扑 -->
@@ -29,6 +33,7 @@
 				steady: {},					// 稳定拓扑图数据
 				max: {},					// 最大拓扑图数据
 				selectIndex: 0,				// 选择器选中项
+				steadyDays: 14,				// 滑块值，稳定拓扑天数
 				chartSteady: null,			// 稳定拓扑echarts对象
 				chartMax: null,				// 最大拓扑echarts对象
 				graphLabel: [
@@ -79,7 +84,10 @@
 			// 设置并展示稳定拓扑图
 			this.chartSteady.showLoading()
 			this.axios.get(this.baseUrl + "/topo/steady", 
-				{params: {domain_name: this.targetDomain}})
+				{params: {
+					domain_name: this.targetDomain,
+					days: this.steadyDays
+				}})
 				.then((response) => {
 					this.chartSteady.hideLoading()
 
@@ -229,6 +237,44 @@
 					this.chartMax.resize()
 					this.chartSteady.resize()
 				})
+			},
+
+			// 滑块值变化时，实时更新稳定拓扑
+			slideChange (value) {
+				// 请求稳定拓扑
+				// 设置并展示稳定拓扑图
+				this.chartSteady.showLoading()
+				this.axios.get(this.baseUrl + "/topo/steady", 
+					{params: {
+						domain_name: this.targetDomain,
+						days: this.steadyDays
+					}})
+					.then((response) => {
+						this.chartSteady.hideLoading()
+
+						// 设置稳定拓扑图
+						this.steady = response.data.result
+						let optionSteady = this.graphInit(this.steady)
+						this.chartSteady.setOption(optionSteady)
+
+						// 服务器端自动化存储生成的拓扑
+						// 延时1s已保证动画效果完成，图完全加载
+						setTimeout(() => {
+							var img = this.chartSteady.getDataURL()
+							this.axios.post(this.baseUrl + "/saveImage",
+								JSON.stringify({img: img}))
+						}, 1000)
+						
+						// 实现响应式调整尺寸
+						window.addEventListener("resize", () => {
+							this.chartSteady.resize()
+						})
+					})
+					.catch((response) => {
+						this.chartSteady.hideLoading()
+						this.$Message.error("网络错误，请稍后再试！")
+						console.log(response)
+					})
 			}
 		}
 	}
@@ -238,6 +284,19 @@
 hr{
 	margin: 10px 0;
 	background-color: #f5f7f9;
+}
+.label{
+	display: flex;
+	flex-direction: row;
+	vertical-align: center;
+}
+.subtitle{
+	line-height: 36px;
+	margin-left: 20px;
+}
+.slider{
+	width: 240px;
+	margin: 0 10px;
 }
 .chart{
 	width: 80%;

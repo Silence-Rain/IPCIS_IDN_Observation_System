@@ -14,6 +14,7 @@ class TopoSteadyHandler(BaseHandler):
 		@apiDescription 获取域名解析IP通信活动的稳定拓扑结构
 		@apiPermission all
 		@apiParam	{String}	domain_name	要查询的域名
+		@apiParam	{String}	days		稳定拓扑阈值天数
 
 		@apiSuccess	{String}	status	"success"
 		@apiSuccess	{JSON}		result	稳定拓扑结构的图数据
@@ -50,9 +51,10 @@ class TopoSteadyHandler(BaseHandler):
 
 	async def get(self):
 		domain = self.get_argument("domain_name")
+		days = self.get_argument("days")
 		ips = await self.db.topo.get_ip(domain)
 		acts = await self.db.topo.get_ip_activities(ips)
-		res = steady_topo(acts)
+		res = steady_topo(acts, days)
 		self.finish_success(result=res)
 
 class TopoMaxHandler(BaseHandler):
