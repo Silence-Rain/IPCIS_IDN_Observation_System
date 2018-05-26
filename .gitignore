@@ -1,5 +1,0 @@
-.gitignore
-**/data
-**/__pycache__/
-**/*.pyc
-**/config.py
