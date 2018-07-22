@@ -20,7 +20,7 @@ class InfoModel(object):
 			temp = {"ip":"", "location":"", "dns":""}
 			temp["ip"] = str(IP(item[0]))
 			temp["location"] = item[1]
-			temp["dns"] = str(IP(item[2]))
+			temp["dns"] = item[2]
 			ret.append(temp)
 
 		return ret

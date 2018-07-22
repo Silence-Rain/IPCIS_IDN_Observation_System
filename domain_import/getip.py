@@ -1,13 +1,13 @@
-# !/usr/bin/env python
-# -*- coding:utf-8 -*-
-
+#!coding:utf-8
 from utils.mysql import MySQL
 import os  
 import socket
 import struct
 
-dns_db = MySQL(host="127.0.0.1", user="root", passwd="rootofmysql", port=3307, db="IPCIS_DNS_DB")
-file = open('./3mths.txt') 
+dns_db = dns_db = MySQL(host="211.65.193.193", user="ipcis", passwd="", db="IPCIS_DNS_DB", port=3307)
+
+#新增的域名列表
+file = open('./target_domains.txt') 
 
 #获取域名列表
 name_list = []  
@@ -29,7 +29,7 @@ for name in name_list :
    
    #fetchall:获取ip的数据
    ip = dns_db.query(sql)
-   if len(ip) !=0:
+   if len(ip) != 0:
        ip = list(ip[0])
    else:
        ip = []
@@ -39,12 +39,10 @@ for name in name_list :
        
    ip_dic[name]=ip
 
-
 #保存ip字典
-file = open('./ipdata.txt','w') 
+file = open('./target_ips.txt','w') 
 file.write(str(ip_dic))  
 file.close()  
-
 
 #关闭连接
 dns_db.close()
