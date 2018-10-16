@@ -3,10 +3,10 @@
 		<div class="label">域名基本信息</div>
 	    <Table stripe :loading="localLoading" :columns="staticCol" :data="staticInfo"></Table>
 	    <hr color="#f5f7f9"/>
-	    <div class="label">域名解析IP信息</div>
+	    <div class="label">域名解析 IP 信息</div>
 	    <Table stripe :loading="localLoading" :columns="ipCol" :data="ipInfo"></Table>
 	    <hr color="#f5f7f9"/>
-	    <div class="label">域名归属信息</div>
+	    <div class="label">域名 whois 信息</div>
 	    <Table stripe :loading="remoteLoading" :columns="whoisCol" :data="whoisInfo"></Table>
 	</div>
 </template>
@@ -84,33 +84,52 @@
 		},
 
 		mounted () {
-			// 请求域名基本信息
-			this.localLoading = true
-			this.axios.post(this.baseUrl + "/info/local", 
-				JSON.stringify({domain_name: this.targetDomain}))
-				.then((response) => {
-					this.localLoading = false
-					this.staticInfo = [response.data.result.static]
-					this.ipInfo = response.data.result.ip
-					// 向父组件Index发布域名解析IP事件，更新父组件中解析IP列表
-					this.bus.$emit("resolved_ips", this.getResolvedIPs())
-				})
-				.catch((response) => {
-					this.localLoading = false
-					this.$Message.error("网络错误，请稍后再试！")
-				})
-			// 请求域名whois信息
-			this.remoteLoading = true
-			this.axios.post(this.baseUrl + "/info/remote", 
-				JSON.stringify({domain_name: this.targetDomain}))
-				.then((response) => {
-					this.remoteLoading = false
-					this.whoisInfo = [response.data.result.whois]
-				})
-				.catch((response) => {
-					this.remoteLoading = false
-					this.$Message.error("网络错误，请稍后再试！")
-				})
+			this.staticInfo = [{
+		        "is_dga": 0,
+		        "ttl": 86400,
+		        "credit": 70,
+		    }]
+			this.ipInfo = [{
+	            "ip": "118.89.140.118",
+	            "location": "中国-上海-上海",
+	            "dns": "8.8.8.8"
+	        }]
+			this.whoisInfo = [{
+		        "registrar": "注册人",
+		        "registrant": "注册机构",
+		        "address": "注册机构地址",
+		        "email": "test@email.com",
+		        "register_date": "17-jun-2005",
+		        "expire_date": "17-jun-2020"
+			}]
+			this.bus.$emit("resolved_ips", this.getResolvedIPs())
+			// // 请求域名基本信息
+			// this.localLoading = true
+			// this.axios.post(this.baseUrl + "/info/local", 
+			// 	JSON.stringify({domain_name: this.targetDomain}))
+			// 	.then((response) => {
+			// 		this.localLoading = false
+			// 		this.staticInfo = [response.data.result.static]
+			// 		this.ipInfo = response.data.result.ip
+			// 		// 向父组件Index发布域名解析IP事件，更新父组件中解析IP列表
+			// 		this.bus.$emit("resolved_ips", this.getResolvedIPs())
+			// 	})
+			// 	.catch((response) => {
+			// 		this.localLoading = false
+			// 		this.$Message.error("网络错误，请稍后再试！")
+			// 	})
+			// // 请求域名whois信息
+			// this.remoteLoading = true
+			// this.axios.post(this.baseUrl + "/info/remote", 
+			// 	JSON.stringify({domain_name: this.targetDomain}))
+			// 	.then((response) => {
+			// 		this.remoteLoading = false
+			// 		this.whoisInfo = [response.data.result.whois]
+			// 	})
+			// 	.catch((response) => {
+			// 		this.remoteLoading = false
+			// 		this.$Message.error("网络错误，请稍后再试！")
+			// 	})
 			
 		},
 

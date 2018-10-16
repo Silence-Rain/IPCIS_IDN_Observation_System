@@ -80,72 +80,72 @@
 			this.chartSteady = echarts.init(document.getElementById("chartSteady"))
 			this.chartMax = echarts.init(document.getElementById("chartMax"))
 
-			// 请求稳定拓扑
-			// 设置并展示稳定拓扑图
-			this.chartSteady.showLoading()
-			this.axios.get(this.baseUrl + "/topo/steady", 
-				{params: {
-					domain_name: this.targetDomain,
-					days: this.steadyDays
-				}})
-				.then((response) => {
-					this.chartSteady.hideLoading()
+			// // 请求稳定拓扑
+			// // 设置并展示稳定拓扑图
+			// this.chartSteady.showLoading()
+			// this.axios.get(this.baseUrl + "/topo/steady", 
+			// 	{params: {
+			// 		domain_name: this.targetDomain,
+			// 		days: this.steadyDays
+			// 	}})
+			// 	.then((response) => {
+			// 		this.chartSteady.hideLoading()
 
-					// 设置稳定拓扑图
-					this.steady = response.data.result
-					let optionSteady = this.graphInit(this.steady)
-					this.chartSteady.setOption(optionSteady)
+			// 		// 设置稳定拓扑图
+			// 		this.steady = response.data.result
+			// 		let optionSteady = this.graphInit(this.steady)
+			// 		this.chartSteady.setOption(optionSteady)
 
-					// 服务器端自动化存储生成的拓扑
-					// 延时1s已保证动画效果完成，图完全加载
-					setTimeout(() => {
-						var img = this.chartSteady.getDataURL()
-						this.axios.post(this.baseUrl + "/saveImage",
-							JSON.stringify({img: img}))
-					}, 1000)
+			// 		// 服务器端自动化存储生成的拓扑
+			// 		// 延时1s已保证动画效果完成，图完全加载
+			// 		setTimeout(() => {
+			// 			var img = this.chartSteady.getDataURL()
+			// 			this.axios.post(this.baseUrl + "/saveImage",
+			// 				JSON.stringify({img: img}))
+			// 		}, 1000)
 					
-					// 实现响应式调整尺寸
-					window.addEventListener("resize", () => {
-						this.chartSteady.resize()
-					})
-				})
-				.catch((response) => {
-					this.chartSteady.hideLoading()
-					this.$Message.error("网络错误，请稍后再试！")
-					console.log(response)
-				})
+			// 		// 实现响应式调整尺寸
+			// 		window.addEventListener("resize", () => {
+			// 			this.chartSteady.resize()
+			// 		})
+			// 	})
+			// 	.catch((response) => {
+			// 		this.chartSteady.hideLoading()
+			// 		this.$Message.error("网络错误，请稍后再试！")
+			// 		console.log(response)
+			// 	})
 
-			// 请求最大拓扑
-			// 设置并展示最大拓扑图
-			this.chartMax.showLoading()
-			this.axios.get(this.baseUrl + "/topo/max", 
-				{params: {domain_name: this.targetDomain}})
-				.then((response) => {
-					this.chartMax.hideLoading()
+			// // 请求最大拓扑
+			// // 设置并展示最大拓扑图
+			// this.chartMax.showLoading()
+			// this.axios.get(this.baseUrl + "/topo/max", 
+			// 	{params: {domain_name: this.targetDomain}})
+			// 	.then((response) => {
+			// 		this.chartMax.hideLoading()
 
-					// 设置最大拓扑图
-					this.max = response.data.result
-					let option = this.graphInit(this.max)
-					this.chartMax.setOption(option)
+			// 		// 设置最大拓扑图
+			// 		this.max = response.data.result
+			// 		let option = this.graphInit(this.max)
+			// 		this.chartMax.setOption(option)
 
-					// 服务器端自动化存储生成的拓扑
-					// 延时1s已保证动画效果完成，图完全加载
-					setTimeout(() => {
-						var img = this.chartSteady.getDataURL()
-						this.axios.post(this.baseUrl + "/saveImage",
-							JSON.stringify({img: img}))
-					}, 1000)
+			// 		// 服务器端自动化存储生成的拓扑
+			// 		// 延时1s已保证动画效果完成，图完全加载
+			// 		setTimeout(() => {
+			// 			var img = this.chartSteady.getDataURL()
+			// 			this.axios.post(this.baseUrl + "/saveImage",
+			// 				JSON.stringify({img: img}))
+			// 		}, 1000)
 
-					// 实现响应式调整尺寸
-					window.addEventListener("resize", () => {
-						this.chartMax.resize()
-					})
-				})
-				.catch((response) => {
-					this.chartMax.hideLoading()
-					this.$Message.error("网络错误，请稍后再试！")
-					console.log(response)
-				})
+			// 		// 实现响应式调整尺寸
+			// 		window.addEventListener("resize", () => {
+			// 			this.chartMax.resize()
+			// 		})
+			// 	})
+			// 	.catch((response) => {
+			// 		this.chartMax.hideLoading()
+			// 		this.$Message.error("网络错误，请稍后再试！")
+			// 		console.log(response)
+			// 	})
 		},
 
 		methods: {
@@ -241,40 +241,40 @@
 
 			// 滑块值变化时，实时更新稳定拓扑
 			slideChange (value) {
-				// 请求稳定拓扑
-				// 设置并展示稳定拓扑图
-				this.chartSteady.showLoading()
-				this.axios.get(this.baseUrl + "/topo/steady", 
-					{params: {
-						domain_name: this.targetDomain,
-						days: this.steadyDays
-					}})
-					.then((response) => {
-						this.chartSteady.hideLoading()
+				// // 请求稳定拓扑
+				// // 设置并展示稳定拓扑图
+				// this.chartSteady.showLoading()
+				// this.axios.get(this.baseUrl + "/topo/steady", 
+				// 	{params: {
+				// 		domain_name: this.targetDomain,
+				// 		days: this.steadyDays
+				// 	}})
+				// 	.then((response) => {
+				// 		this.chartSteady.hideLoading()
 
-						// 设置稳定拓扑图
-						this.steady = response.data.result
-						let optionSteady = this.graphInit(this.steady)
-						this.chartSteady.setOption(optionSteady)
+				// 		// 设置稳定拓扑图
+				// 		this.steady = response.data.result
+				// 		let optionSteady = this.graphInit(this.steady)
+				// 		this.chartSteady.setOption(optionSteady)
 
-						// 服务器端自动化存储生成的拓扑
-						// 延时1s已保证动画效果完成，图完全加载
-						setTimeout(() => {
-							var img = this.chartSteady.getDataURL()
-							this.axios.post(this.baseUrl + "/saveImage",
-								JSON.stringify({img: img}))
-						}, 1000)
+				// 		// 服务器端自动化存储生成的拓扑
+				// 		// 延时1s已保证动画效果完成，图完全加载
+				// 		setTimeout(() => {
+				// 			var img = this.chartSteady.getDataURL()
+				// 			this.axios.post(this.baseUrl + "/saveImage",
+				// 				JSON.stringify({img: img}))
+				// 		}, 1000)
 						
-						// 实现响应式调整尺寸
-						window.addEventListener("resize", () => {
-							this.chartSteady.resize()
-						})
-					})
-					.catch((response) => {
-						this.chartSteady.hideLoading()
-						this.$Message.error("网络错误，请稍后再试！")
-						console.log(response)
-					})
+				// 		// 实现响应式调整尺寸
+				// 		window.addEventListener("resize", () => {
+				// 			this.chartSteady.resize()
+				// 		})
+				// 	})
+				// 	.catch((response) => {
+				// 		this.chartSteady.hideLoading()
+				// 		this.$Message.error("网络错误，请稍后再试！")
+				// 		console.log(response)
+				// 	})
 			}
 		}
 	}

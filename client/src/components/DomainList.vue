@@ -7,8 +7,8 @@
 					<div class="nav-head">
 						<div class="nav-head-logo">IPCIS</div>
 						<div class="nav-head-title">
-							<div>恶意域名检测系统</div>
-							<div>Malicious Domain Detection System</div>
+							<div>域名信息累计观测系统</div>
+							<div>Domains Information Accumulative Observation System</div>
 						</div>
 					</div>
 				</Menu>
@@ -17,16 +17,16 @@
 			<Layout>
 				<Content class="content">
 					<div class="content-title">
-						已知恶意域名列表
+						已收集域名列表
 					</div>
 					<div class="list-action">
-						 <Button type="primary" shape="circle" icon="plus" @click="showAdd">添加恶意域名</Button>
+						 <Button type="primary" shape="circle" icon="md-add" @click="showAdd">添加域名</Button>
 						 <Input class="searchbar" v-model="targetDomain" icon="search" placeholder="搜索"></Input>
 					</div>
 					<Table style="margin:20px 0" stripe :loading="isLoading" :columns="tableHeader" :data="list" @on-row-click="redirectTo"></Table>
 					<Page style="float:right;margin:10px;" :total="length" :current="curPage" :page-size="20" show-total @on-change="changePage"></Page>
 
-					<Modal v-model="showAddModal" title="添加恶意域名" @on-ok="addDomain">
+					<Modal v-model="showAddModal" title="添加域名" @on-ok="addDomain">
 						<Input v-model="newDomain" placeholder="请输入完整域名"></Input>
 					</Modal>
 				</Content>
@@ -51,7 +51,7 @@
 				curPage: 1,					// 当前页数
 				newDomain: "",				// 新增域名
 				showAddModal: false,		// 新增域名对话框显示状态
-				rawList: [],				// 所有已知恶意域名列表
+				rawList: [],				// 所有已知域名列表
 				tableHeader: [
 					{
 						title: "域名",
@@ -67,12 +67,8 @@
                         }
 					},
 					{
-						title: "活跃度",
-						key: "active"
-					},
-					{
-						title: "服务类型",
-						key: "service"
+						title: "语种",
+						key: "lang"
 					}
 				]
 			}
@@ -109,35 +105,45 @@
 		mounted () {
 			localStorage.clear()
 			
-			// 请求已知恶意域名列表
-			this.isLoading = true
-			this.axios.get(this.baseUrl + "/list")
-				.then((response) => {
-					this.isLoading = false
-					for (var item of response.data.result) {
-						this.rawList.push(this.formatter(item))
-					}
-				})
-				.catch((response) => {
-					this.isLoading = false
-					this.$Message.error("网络错误，请稍后再试！");
-				})
+			// 请求已知域名列表
+			// this.isLoading = true
+			// 测试数据
+			this.rawList = [
+			{
+				domain_name: "test.com",
+				lang: "English"
+			},
+			{
+				domain_name: "aaaa.cn",
+				lang: "France"
+			}]
+
+			// this.axios.get(this.baseUrl + "/list")
+			// 	.then((response) => {
+			// 		this.isLoading = false
+			// 		for (var item of response.data.result) {
+			// 			this.rawList.push(this.formatter(item))
+			// 		}
+			// 	})
+			// 	.catch((response) => {
+			// 		this.isLoading = false
+			// 		this.$Message.error("网络错误，请稍后再试！");
+			// 	})
 		},
 		methods: {
 			// 重定向页面至所选择域名的详细信息
 			redirectTo (data, index) {
 				this.$router.push({
-					name: "Analytic", 
+					name: "Index", 
 					params: {"domain_name": this.rawList[index].domain_name}
 				})
 			},
 
 			// 数据格式化
-			formatter (domain, active = null, service = null) {
+			formatter (domain, lang = null) {
 				return {
 					"domain_name": domain,
-					"active": active,
-					"service": service
+					"lang": lang || "English"
 				}
 			},
 
@@ -155,30 +161,31 @@
 				this.showAddModal = true
 			},
 
-			// 提交新的恶意域名，后端开始对新域名进行背景信息富化
+			// 提交新的域名，后端开始对新域名进行背景信息富化
 			addDomain () {
-				this.axios.post(this.baseUrl.slice(0,-1)+"9/enrich", 
-					JSON.stringify({domain_name: this.newDomain}))
-					.then((response) => {
-						// 后端信息富化完成
-						if (response.data.result) {
-							this.rawList.push(this.formatter(this.newDomain))
-							this.$Notice.success({
-								title: "添加新域名成功！"
-							})
-						}
-						// 后端信息富化失败
-						else {
-							this.$Notice.error({
-								title: "添加新域名失败：数据库错误"
-							})
-						}
-					})
-					.catch((response) => {
-						this.$Notice.error({
-							title: "添加新域名失败：网络错误"
-						})
-					})
+				console.log(this.newDomain)
+				// this.axios.post(this.baseUrl + "/insertDomain", 
+				// 	JSON.stringify({domain_name: this.newDomain}))
+				// 	.then((response) => {
+				// 		// 后端信息富化完成
+				// 		if (response.data.result) {
+				// 			this.rawList.push(this.formatter(this.newDomain))
+				// 			this.$Notice.success({
+				// 				title: "添加新域名成功！"
+				// 			})
+				// 		}
+				// 		// 后端信息富化失败
+				// 		else {
+				// 			this.$Notice.error({
+				// 				title: "添加新域名失败：数据库错误"
+				// 			})
+				// 		}
+				// 	})
+				// 	.catch((response) => {
+				// 		this.$Notice.error({
+				// 			title: "添加新域名失败：网络错误"
+				// 		})
+				// 	})
 				// 提交后等待后端完成富化
 				this.$Notice.warning({
 					title: "新域名已提交，请等待查询完成……"

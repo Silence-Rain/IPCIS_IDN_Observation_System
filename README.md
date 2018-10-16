@@ -9,7 +9,7 @@ A information analysis system included by IPCIS (IP Comprehensive Information Sy
 ```sh
 ./IPCIS_Domains_Information_System
 ├── client              # 系统前端(Vue.js)
-├── domain_import       # 新域名导入模块
+├── domain_import       # 新域名导入模块(tornado)
 └── server              # 系统后端(tornado)
 ```
 
@@ -30,8 +30,9 @@ A information analysis system included by IPCIS (IP Comprehensive Information Sy
 
 #### 实现功能
 
+- 导入新域名的图形化界面
 - 获取域名基本信息，解析IP信息，whois归属信息
 - 获取域名解析IP通信活动的稳定&最大拓扑结构
 - 获取域名解析IP活动的地理位置分布
-- 计算并获取域名活跃度
+- 获取一段时间内域名通信活动活跃度
 

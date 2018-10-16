@@ -7,8 +7,8 @@
 					<div class="nav-head">
 						<div class="nav-head-logo">IPCIS</div>
 						<div class="nav-head-title">
-							<div>恶意域名检测系统</div>
-							<div>Malicious Domain Detection System</div>
+							<div>域名信息累计观测系统</div>
+							<div>Domains Information Accumulative Observation System</div>
 						</div>
 					</div>
 				</Menu>
@@ -18,27 +18,24 @@
 				<!-- 侧边栏 -->
 				<Sider hide-trigger style="background:#fff;">
 					<Menu active-name="0" theme="light" width="auto" @on-select="route">
-						<MenuItem name="4">
+						<MenuItem name="3">
 							<Icon type="ios-list"></Icon>
-							已知恶意域名列表
+							已知域名列表
 						</MenuItem>
 						<MenuItem name="0">
 							<Icon type="ios-information"></Icon>
-							概览
+							域名基本信息
 						</MenuItem>
 						<Submenu name="-1">
 							<template slot="title">
 								<Icon type="ios-albums"></Icon>
-								实时动态
+								域名实时动态
 							</template>
-							<MenuItem name="1">
-								IP地址通信活动关系
-							</MenuItem>
 							<MenuItem name="2">
-								域名活跃度
+								通信对象地理位置分布
 							</MenuItem>
-							<MenuItem name="3">
-								IP地理位置分布
+							<MenuItem name="1">
+								通信对象网络拓扑
 							</MenuItem>
 						</Submenu>
 					</Menu>
@@ -81,10 +78,9 @@
 				ips: [],					// 目标域名解析IP列表
 				curModule: 0,				// 当前选中的模块
 				pages: [					// 组件和模块名映射
-					["概览", "Info"], 
-					["IP地址通信活动关系", "Relation"],
-					["域名活跃度", "Trend"], 
-					["IP地理位置分布", "Map"]
+					["域名基本信息", "BasicInfo"], 
+					["通信对象网络拓扑", "TransTopo"],
+					["通信对象地理位置分布", "GeoDistribution"]
 				]
 			}
 		},
@@ -97,9 +93,9 @@
 				this.targetDomain = this.$route.params.domain_name
 				localStorage.setItem("domain", this.targetDomain)
 			}
-			// 默认路由到“概览”模块
+			// 默认路由到“域名基本信息”模块
 			this.route(0)
-			// 监听子组件“概览”模块发送的域名解析IP事件，并更新自身数据和localStorage
+			// 监听子组件“域名基本信息”模块发送的域名解析IP事件，并更新自身数据和localStorage
 			this.bus.$on("resolved_ips", (ips) => {
 				this.ips = localStorage.getItem("ips")
 				if (this.ips == null) {
@@ -113,10 +109,10 @@
 			// 切换模块的路由函数
 			route (name) {
 				// 切换到“已知域名列表”模块之前，清空localStorage
-				if (name == 4) {
+				if (name == 3) {
 					localStorage.clear()
 					this.$router.push({
-						name: "KnownList"
+						name: "DomainList"
 					})
 				}
 				// 切换到其他模块时，将目标域名和解析IP作为路由参数传递

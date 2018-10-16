@@ -1,11 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/components/analytic/Index'
-import KnownList from '@/components/KnownList'
-import Info from '@/components/analytic/Info'
-import Trend from '@/components/analytic/Trend'
-import Map from '@/components/analytic/Map'
-import Relation from '@/components/analytic/Relation'
+import DomainList from '@/components/DomainList'
+import Index from '@/components/analysis/Index'
+import BasicInfo from '@/components/analysis/BasicInfo'
+import GeoDistribution from '@/components/analysis/GeoDistribution'
+import TransTopo from '@/components/analysis/TransTopo'
 
 Vue.use(Router)
 
@@ -13,33 +12,28 @@ export default new Router({
   routes: [
     {
     	path: "/",
-    	name: "KnownList",
-    	component: KnownList
+    	name: "DomainList",
+    	component: DomainList
     },
     {
-    	path: "/analytic",
-    	name: "Analytic",
+    	path: "/analysis",
+    	name: "Index",
     	component: Index,
     	children:[
     		{
 		    	path: "/info",
-		    	name: "Info",
-		    	component: Info
-		    },
-		    {
-		    	path: "/trend",
-		    	name: "Trend",
-		    	component: Trend
+		    	name: "BasicInfo",
+		    	component: BasicInfo
 		    },
 		    {
 		    	path: "/map",
-		    	name: "Map",
-		    	component: Map
+		    	name: "GeoDistribution",
+		    	component: GeoDistribution
 		    },
 		    {
-		    	path: "/relation",
-		    	name: "Relation",
-		    	component: Relation
+		    	path: "/topo",
+		    	name: "TransTopo",
+		    	component: TransTopo
 		    }
     	]
     }
