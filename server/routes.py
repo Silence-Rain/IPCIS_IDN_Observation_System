@@ -1,9 +1,6 @@
 handlers = list()
 
-from handler import info
-from handler import topo
-from handler import location
-from handler import active
-from handler import service
-from handler import domain_list
-from handler import get_image
+from handler import idn_list
+from handler import geo_distribution
+from handler import basic_info
+# from handler import trans_topo
