@@ -2,7 +2,7 @@
 	<div>
 		<div class="select">
 			查询近
-			<Select v-model="time_length" style="width:50px;height:20px;margin:0 10px;">
+			<Select v-model="time_length" style="width:50px;height:20px;margin:0 10px;" @on-change="selectChange">
 				<Option v-for="item in time_range" :value="item" :key="item">{{ item }}</Option>
 			</Select>
 			天内的情况
@@ -124,23 +124,29 @@
 		},
 
 		mounted () {
-			// 请求解析IP活动
-			this.axios.post(this.baseUrl + "/location", 
-				JSON.stringify({ips: this.ips, length: this.time_length}))
-				.then((response) => {
-					this.raw = response.data.result
-
-					this.opposite_count = this.raw["opposite"].length
-					this.cluster()
-					// 得到数据后初始化地图
-					this.mapInit(this.acts)
-				})
-				.catch((response) => {
-					this.$Message.error("网络错误，请稍后再试！")
-				})
+			this.requestIPRecord()
 		},
 
 		methods: {
+			selectChange () {
+				this.requestIPRecord()
+			},
+			requestIPRecord () {
+				// 请求解析IP活动
+				this.axios.post(this.baseUrl + "/location", 
+					JSON.stringify({ips: ["211.65.193.23"], length: this.time_length}))
+					.then((response) => {
+						this.raw = response.data.result
+
+						this.opposite_count = this.raw["opposite"].length
+						this.cluster()
+						// 得到数据后初始化地图
+						this.mapInit(this.acts)
+					})
+					.catch((response) => {
+						this.$Message.error("网络错误，请稍后再试！")
+					})
+			},
 			cluster () {
 				let auth_set = {}
 				let location_set = {}

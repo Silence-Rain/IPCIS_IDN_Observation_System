@@ -27,7 +27,8 @@ class GeoDistributionHandler(BaseHandler):
 
 	async def post(self):
 		ips = self.get_argument("ips")
-		res = await self.db.geo.get_geo_distribution(ips)
+		length = self.get_argument("length")
+		res = await self.db.geo.get_geo_distribution(ips, length)
 		self.finish_success(result=res)
 
 
