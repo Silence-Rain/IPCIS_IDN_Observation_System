@@ -104,31 +104,31 @@
 		},
 		mounted () {
 			localStorage.clear()
+
+			// // 测试数据
+			// this.rawList = [
+			// {
+			// 	domain_name: "test.com",
+			// 	lang: "English"
+			// },
+			// {
+			// 	domain_name: "aaaa.cn",
+			// 	lang: "France"
+			// }]
 			
 			// 请求已知域名列表
-			// this.isLoading = true
-			// 测试数据
-			this.rawList = [
-			{
-				domain_name: "test.com",
-				lang: "English"
-			},
-			{
-				domain_name: "aaaa.cn",
-				lang: "France"
-			}]
-
-			// this.axios.get(this.baseUrl + "/list")
-			// 	.then((response) => {
-			// 		this.isLoading = false
-			// 		for (var item of response.data.result) {
-			// 			this.rawList.push(this.formatter(item))
-			// 		}
-			// 	})
-			// 	.catch((response) => {
-			// 		this.isLoading = false
-			// 		this.$Message.error("网络错误，请稍后再试！");
-			// 	})
+			this.isLoading = true
+			this.axios.get(this.baseUrl + "/list")
+				.then((response) => {
+					this.isLoading = false
+					for (var item of response.data.result) {
+						this.rawList.push(this.formatter(item))
+					}
+				})
+				.catch((response) => {
+					this.isLoading = false
+					this.$Message.error("网络错误，请稍后再试！");
+				})
 		},
 		methods: {
 			// 重定向页面至所选择域名的详细信息
@@ -140,10 +140,10 @@
 			},
 
 			// 数据格式化
-			formatter (domain, lang = null) {
+			formatter (item) {
 				return {
-					"domain_name": domain,
-					"lang": lang || "English"
+					"domain_name": item.domain_name,
+					"lang": item.lang || "英语"
 				}
 			},
 

@@ -97,11 +97,7 @@
 			this.route(0)
 			// 监听子组件“域名基本信息”模块发送的域名解析IP事件，并更新自身数据和localStorage
 			this.bus.$on("resolved_ips", (ips) => {
-				this.ips = localStorage.getItem("ips")
-				if (this.ips == null) {
-					this.ips = ips
-					localStorage.setItem("ips", JSON.stringify(this.ips))
-				}
+				localStorage.setItem("ips", JSON.stringify(ips))
 			})
 		},
 
