@@ -7,5 +7,5 @@ class Database(object):
 		self.db = db
 
 		self.list = IDNListModel(self.db)
-		self.geo = GeoDistributionModel()
+		self.geo = GeoDistributionModel(self.db)
 		self.info = BasicInfoModel(self.db)

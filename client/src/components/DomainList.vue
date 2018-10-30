@@ -7,8 +7,8 @@
 					<div class="nav-head">
 						<div class="nav-head-logo">IPCIS</div>
 						<div class="nav-head-title">
-							<div>域名信息累计观测系统</div>
-							<div>Domains Information Accumulative Observation System</div>
+							<div>国际化域名累计观测系统</div>
+							<div>Accumulative International Domain Name Observation System</div>
 						</div>
 					</div>
 				</Menu>
@@ -16,19 +16,49 @@
 
 			<Layout>
 				<Content class="content">
-					<div class="content-title">
-						已收集域名列表
-					</div>
-					<div class="list-action">
-						 <Button type="primary" shape="circle" icon="md-add" @click="showAdd">添加域名</Button>
-						 <Input class="searchbar" v-model="targetDomain" icon="search" placeholder="搜索"></Input>
-					</div>
-					<Table style="margin:20px 0" stripe :loading="isLoading" :columns="tableHeader" :data="list" @on-row-click="redirectTo"></Table>
-					<Page style="float:right;margin:10px;" :total="length" :current="curPage" :page-size="20" show-total @on-change="changePage"></Page>
+					<Row>
+						<Col span="11">
+							<Card class="card">
+								<p slot="title">已收集国际化域名列表（点击查看详情）</p>
+								<div class="list-action">
+									<Input class="searchbar" v-model="searchTarget" icon="search" placeholder="搜索域名，语种"></Input>
+								</div>
+								<Table style="margin:10px" stripe :loading="isLoading" :columns="tableHeader" :data="showList" @on-row-click="redirectTo"></Table>
+								<Page style="margin:10px;" :total="length" :current="curPage" :page-size="10" show-total @on-change="changePage"></Page>
+							</Card>
+						</Col>
+						<Col span="11" offset="1">
+							<Card class="card">
+								<p slot="title">语种分布比例概览</p>
+								<keep-alive>
+									<div id="distribution_pie" style="width:100%;height:400px;"></div>
+								</keep-alive>
+							</Card>
+						</Col>
+					</Row>
 
-					<Modal v-model="showAddModal" title="添加域名" @on-ok="addDomain">
-						<Input v-model="newDomain" placeholder="请输入完整域名"></Input>
-					</Modal>
+					<Row>
+						<Col span="23">
+							<Card class="card">
+								<p slot="title">语种分布数量概览</p>
+								<keep-alive>
+									<div id="distribution_bar" style="width:100%;height:550px;"></div>
+								</keep-alive>
+							</Card>
+						</Col>
+					</Row>
+
+					<Row>
+						<Col span="23">
+							<Card class="card">
+								<p slot="title">地理分布概览</p>
+								<keep-alive>
+									<div id="geo_map" style="width:100%;height:550px;"></div>
+								</keep-alive>
+							</Card>
+						</Col>
+					</Row>
+
 				</Content>
 			</Layout>
 
@@ -43,28 +73,33 @@
 </template>
 
 <script>
+	import inMap from "inmap/dist/inmap.min.js"
+
 	export default {
+
 		data () {
 			return {
-				targetDomain: "",			// 要查询的目标域名
+				searchTarget: "",			// 要查询的目标域名
 				isLoading: false,			// 表格loading状态
 				curPage: 1,					// 当前页数
 				newDomain: "",				// 新增域名
-				showAddModal: false,		// 新增域名对话框显示状态
 				rawList: [],				// 所有已知域名列表
+				rawActs: [],				// 所有已知域名活动数据
+				distributionPie: null,
+				distributionBar: null,
 				tableHeader: [
 					{
 						title: "域名",
 						key: "domain_name",
 						render: (h, params) => {
-                            return h('div', [
-                                h('a', {
-                                	style: {
-                                		textDecoration: "underline"
-                                	}
-                                }, params.row.domain_name)
-                            ])
-                        }
+							return h('div', [
+								h('a', {
+									style: {
+										textDecoration: "underline"
+									}
+								}, params.row.domain_name)
+							])
+						}
 					},
 					{
 						title: "语种",
@@ -76,66 +111,290 @@
 		computed: {
 			// 已知恶意域名列表长度
 			length () {
-				return this.rawList.length
+				return this.list.length
 			},
-			// 当前显示的内容
-			// 根据选择的页数展示20条记录
+			// 根据筛选条件得到的实际列表
 			// 根据搜索框中内容，正则匹配查询结果
 			list () {
-				if (this.targetDomain == "") {
-					return this.rawList.slice((this.curPage - 1) * 20, this.curPage * 20)
-				}
-				else {
-					var ret = []
-					for (var i of this.rawList) {
-						if (this.regMatch(this.targetDomain, i.domain_name)) {
-							ret.push(i)
+				if (this.searchTarget == "") {
+					return this.rawList
+				} else {
+					let ret = []
+					// 搜索栏输入的是语种内容
+					if (/(文|语)$/.test(this.searchTarget)) {
+						for (let i of this.rawList) {
+							if (this.regMatch(this.searchTarget, i.lang)) {
+								ret.push(i)
+							}
+						}
+					} else {
+						for (let i of this.rawList) {
+							if (this.regMatch(this.searchTarget, i.domain_name)) {
+								ret.push(i)
+							}
 						}
 					}
+
 					this.curPage = 1
-					if (ret.length == 0) {
-						return [this.formatter("未查询到结果")]
-					}
-					else {
-						return ret.slice((this.curPage - 1) * 20, this.curPage * 20)
-					}
+					return (ret.length == 0) ? [] : ret
 				}
+			},
+			// 当前显示的内容
+			// 根据选择的页数展示10条记录
+			showList () {
+				return this.list.slice((this.curPage - 1) * 10, this.curPage * 10)
+			},
+			// 按照inMap要求，格式化后的IP活动数据
+			acts () {
+				let ret = []
+				for (var item of this.rawActs["self"]) {
+					let temp = {
+						name: "--",
+						location: item.location,
+						ip: item.ip,
+						geometry: {
+							type: 'Point',
+							coordinates: [item.lng, item.lat]
+						},
+						style: {
+							backgroundColor: "#0F0",
+							size: 5,
+						}
+					}
+					ret.push(temp)
+				}
+				for (var item of this.rawActs["opposite"]) {
+					let temp = {
+						name: item.auth,
+						location: item.location,
+						ip: item.ip,
+						geometry: {
+							type: 'Point',
+							coordinates: [item.lng, item.lat]
+						},
+						style: {
+							backgroundColor:"#FF8C00",
+							size: 5,
+						}
+					}
+					ret.push(temp)
+				}
+
+				return ret
 			}
 		},
+		activated () {
+			this.distributionPie.resize()
+		},
 		mounted () {
+			// 导入echarts库和组件
+			let echarts = require("echarts/lib/echarts")
+			require('echarts/lib/chart/pie')
+			require('echarts/lib/chart/bar')
+			require('echarts/lib/component/legend')
+			require('echarts/lib/component/legend/ScrollableLegendModel')
+			require('echarts/lib/component/legend/ScrollableLegendView')
+			require('echarts/lib/component/legend/scrollableLegendAction')
+			require('echarts/lib/component/tooltip')
+
 			localStorage.clear()
 
-			// // 测试数据
-			// this.rawList = [
-			// {
-			// 	domain_name: "test.com",
-			// 	lang: "English"
-			// },
-			// {
-			// 	domain_name: "aaaa.cn",
-			// 	lang: "France"
-			// }]
+			this.distributionPie = echarts.init(document.getElementById("distribution_pie"))
+			this.distributionBar = echarts.init(document.getElementById("distribution_bar"))
 			
 			// 请求已知域名列表
 			this.isLoading = true
+			this.distributionPie.showLoading()
+			this.distributionBar.showLoading()
+
 			this.axios.get(this.baseUrl + "/list")
 				.then((response) => {
 					this.isLoading = false
-					for (var item of response.data.result) {
+					this.distributionPie.hideLoading()
+					this.distributionBar.hideLoading()
+
+					for (var item of response.data.result.res) {
 						this.rawList.push(this.formatter(item))
 					}
+
+					let pieOption = this.pieInit(this.rawList)
+					let barOption = this.barInit(this.rawList)
+					this.distributionPie.setOption(pieOption)
+					this.distributionBar.setOption(barOption)
+
+					// 实现响应式调整尺寸
+					window.addEventListener("resize", () => {
+						this.distributionPie.resize()
+						this.distributionBar.resize()
+					})
 				})
 				.catch((response) => {
 					this.isLoading = false
+					this.distributionPie.hideLoading()
+					this.distributionBar.hideLoading()
+					console.log(response)
 					this.$Message.error("网络错误，请稍后再试！");
+				})
+
+
+			// 请求解析IP活动
+			this.axios.post(this.baseUrl + "/location_all")
+				.then((response) => {
+					this.rawActs = response.data.result
+					// 得到数据后初始化地图
+					this.mapInit(this.acts)
+				})
+				.catch((response) => {
+					this.$Message.error("网络错误，请稍后再试！")
 				})
 		},
 		methods: {
+			// 初始化饼状图
+			pieInit (data) {
+    			let legendData = []
+    			let seriesData = []
+    			let seriesDataRaw = {}
+    			let selected = {}
+
+    			for (let i in data) {
+    				let item = data[i]
+    				if (legendData.indexOf(item.lang) == -1) {
+    					legendData.push(item.lang)
+    					seriesDataRaw[item.lang] = 1
+    				} else {
+    					seriesDataRaw[item.lang] += 1
+    				}
+    			}
+    			for (let i in seriesDataRaw) {
+    				let item = seriesDataRaw[i]
+    				seriesData.push({name: i, value: item, label: {show: item > 10}, labelLine: {show: item > 10}})
+    			}
+    			seriesData.sort((a, b) => b.value - a.value)
+    			this.aaaa = seriesData
+
+				let option = {
+				    tooltip : {
+				        trigger: 'item',
+				        formatter: "{a} <br/>{b} : {c} ({d}%)"
+				    },
+				    legend: {
+				        type: 'scroll',
+				        orient: 'vertical',
+				        right: 10,
+				        top: 20,
+				        bottom: 20,
+				        data: legendData,
+				        selected: selected
+				    },
+				    series : [
+				        {
+				            name: '域名数量',
+				            type: 'pie',
+				            radius : '55%',
+				            center: ['40%', '50%'],
+				            data: seriesData,
+				            itemStyle: {
+				                emphasis: {
+				                    shadowBlur: 10,
+				                    shadowOffsetX: 0,
+				                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+				                }
+				            }
+				        }
+				    ]
+				}
+
+				return option
+			},
+			// 初始化柱状图
+			barInit (data) {
+				let xlabel = []
+				let ydata = []
+				for (let item of this.aaaa) {
+					xlabel.push(item.name)
+					ydata.push(item.value)
+				}
+				let option = {
+					tooltip : {
+			            trigger: 'axis',
+			            axisPointer: {
+			                type: 'shadow',
+			                label: {
+			                    show: true
+			                }
+			            }
+			        },
+				    xAxis: {
+				        type: 'category',
+				        name: "语种",
+				        axisLabel: {
+				        	rotate: 60
+				        },
+				        data: xlabel
+				    },
+				    yAxis: {
+				        type: 'value',
+				        name: '数量',
+				        splitNumber: 10,
+				    },
+				    series: [{
+				        data: ydata,
+				        type: 'bar',
+				        color: ["#2f4554"]
+				    }]
+				}
+
+				return option
+			},
+			//初始化地图
+			mapInit (data) {
+				let inmap = new inMap.Map({
+					id: "geo_map",
+					skin: "Blueness",
+					// 初始地图中心
+					center: [107.40, 33.42],
+					// 缩放
+					zoom: {
+						value: 3, 
+						show: true, 
+						max: 10, 
+						min: 2
+					}
+				})
+				let overlay = new inMap.PointOverlay({
+					// 气泡提示
+					tooltip: {
+						show: true,
+						formatter: (params) => {
+							return (
+								"<div><div>IP："+params.ip+"</div><div>管理归属："+params.name+"</div><div>位置："+params.location+"</div></div>"
+							);
+						},
+						offsets: {
+							top: 15,
+							left: 15
+						}
+					},
+					style: {
+						normal: {
+							backgroundColor: "#FFF",
+							size: 4
+						},
+						mouseOver: {
+							backgroundColor: "#FFF",
+							borderWidth: 0
+						}
+					},
+					data: data
+				})
+				inmap.add(overlay)
+			},
+
 			// 重定向页面至所选择域名的详细信息
 			redirectTo (data, index) {
 				this.$router.push({
 					name: "Index", 
-					params: {"domain_name": this.rawList[index].domain_name}
+					params: {"domain_name": this.rawList[(this.curPage - 1) * 10 + index].domain_name}
 				})
 			},
 
@@ -156,41 +415,6 @@
 			changePage (page) {
 				this.curPage = page
 			},
-
-			showAdd () {
-				this.showAddModal = true
-			},
-
-			// 提交新的域名，后端开始对新域名进行背景信息富化
-			addDomain () {
-				console.log(this.newDomain)
-				// this.axios.post(this.baseUrl + "/insertDomain", 
-				// 	JSON.stringify({domain_name: this.newDomain}))
-				// 	.then((response) => {
-				// 		// 后端信息富化完成
-				// 		if (response.data.result) {
-				// 			this.rawList.push(this.formatter(this.newDomain))
-				// 			this.$Notice.success({
-				// 				title: "添加新域名成功！"
-				// 			})
-				// 		}
-				// 		// 后端信息富化失败
-				// 		else {
-				// 			this.$Notice.error({
-				// 				title: "添加新域名失败：数据库错误"
-				// 			})
-				// 		}
-				// 	})
-				// 	.catch((response) => {
-				// 		this.$Notice.error({
-				// 			title: "添加新域名失败：网络错误"
-				// 		})
-				// 	})
-				// 提交后等待后端完成富化
-				this.$Notice.warning({
-					title: "新域名已提交，请等待查询完成……"
-				})
-			}
 		}
 	}
 </script>
@@ -230,16 +454,16 @@
 	margin: -5px 0;
 }
 .content{
-	padding: 0 100px;
+	padding: 0 50px;
 	min-height: 280px;
-	background: #fff;
+	background: #EFF0F4;
 }
-.content-title{
-	height: 40px;
-	margin: 20px 0;
-	padding: 0 10px;
-	font-size: 20px;
-	line-height: 40px;
+.card{
+	display: flex;
+	flex-direction: column;
+	align-items: left;
+	margin: 20px;
+	width: 100%;
 }
 .list-action{
 	position: relative;
@@ -249,7 +473,10 @@
 .searchbar{
 	width: 200px;
 	border-radius: 16px;
-	float: right;
+}
+.label{
+	margin: 10px;
+	font-size: 16px;
 }
 .footer{
 	text-align: center;

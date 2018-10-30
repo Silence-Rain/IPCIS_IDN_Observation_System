@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<div class="label">域名基本信息</div>
-	    <Table stripe :loading="localLoading" :columns="basicCol" :data="basicInfo"></Table>
+		<Tag type="dot" color="primary">{{ lang }}</Tag>
+		<!-- <Tag v-if="!isIdentical" type="dot" color="error">whois信息与解析IP信息不符</Tag> -->
 	    
 	    <hr color="#f5f7f9"/>
 	    <div class="label">域名 whois 信息</div>
@@ -19,23 +19,10 @@
 				targetDomain: "",			// 要查询的目标域名
 				localLoading: false,		// 基本信息表loading状态
 				remoteLoading: false,		// whois信息表loading状态
-	            basicInfo: [],				// 域名基本信息
+	            lang: "",					// 域名语种
 	            whoisInfo: [],				// 域名whois归属信息
 	            ipInfo: [],					// 域名解析IP信息
-	            basicCol: [
-	                {
-	                    title: "语种",
-	                    key: "lang"
-	                },
-	                {
-	                    title: "生存时间（TTL）",
-	                    key: "ttl"
-	                },
-	                {
-	                    title: "发现时间",
-	                    key: "timestamp"
-	                }
-	            ],
+	            // isIdentical: false,			// 域名解析IP是否与whois信息相同
 	            whoisCol: [
 	                {
 	                    title: "注册人",
@@ -66,6 +53,14 @@
 	                {
 	                    title: "解析IP地址",
 	                    key: "ip"
+	                }, 
+	                {
+	                    title: "解析IP地理位置",
+	                    key: "location"
+	                }, 
+	                {
+	                    title: "解析IP归属",
+	                    key: "auth"
 	                }
 	            ]
 	        }
@@ -77,16 +72,6 @@
 		},
 
 		mounted () {
-			// this.staticInfo = [{
-		 //        "is_dga": 0,
-		 //        "ttl": 86400,
-		 //        "credit": 70,
-		 //    }]
-			// this.ipInfo = [{
-	  //           "ip": "118.89.140.118",
-	  //           "location": "中国-上海-上海",
-	  //           "dns": "8.8.8.8"
-	  //       }]
 			this.whoisInfo = [{
 		        "registrar": "注册人",
 		        "registrant": "注册机构",
@@ -95,16 +80,14 @@
 		        "register_date": "17-jun-2005",
 		        "expire_date": "17-jun-2020"
 			}]
-			// this.bus.$emit("resolved_ips", this.getResolvedIPs())
 			// 请求域名基本信息
 			this.localLoading = true
 			this.axios.post(this.baseUrl + "/info/basic", 
 				JSON.stringify({domain_name: this.targetDomain}))
 				.then((response) => {
 					this.localLoading = false
-					this.basicInfo = [response.data.result]
+					this.lang = response.data.result.lang
 					this.ipInfo = response.data.result.ip
-					// console.log(this.ipInfo)
 					// 向父组件Index发布域名解析IP事件，更新父组件中解析IP列表
 					this.bus.$emit("resolved_ips", this.getResolvedIPs())
 				})

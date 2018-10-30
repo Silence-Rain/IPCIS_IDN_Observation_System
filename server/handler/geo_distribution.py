@@ -32,6 +32,33 @@ class GeoDistributionHandler(BaseHandler):
 		self.finish_success(result=res)
 
 
+class GeoDistributionAllHandler(BaseHandler):
+
+	"""
+		@api {get}	/list  已知恶意域名
+		@apiGroup	list
+		@apiVersion	1.0.0
+		@apiDescription 获取已知恶意域名列表
+		@apiPermission all
+
+		@apiSuccess	{String}	status	"success"
+		@apiSuccess	{JSON}		result	已知恶意域名列表
+
+		@apiSuccessExample {json} 正常响应:
+			HTTP/1.1 200 OK
+			[
+			    "www.test.com",
+			    "tieba.baidu.com"
+			    ...
+			]
+	"""
+
+	async def post(self):
+		res = await self.db.geo.get_all_geo_distribution()
+		self.finish_success(result=res)
+
+
 routes.handlers += [
-	(r'/location', GeoDistributionHandler)
+	(r'/location', GeoDistributionHandler),
+	(r'/location_all', GeoDistributionAllHandler)
 ]

@@ -6,6 +6,15 @@ import time
 import json
 
 class GeoDistributionModel(object):
+	def __init__(self, db):
+		self.db = db
+
+	async def get_all_geo_distribution(self):
+		ret = {"self":[], "opposite": []}
+		with open("/Users/Silence/Desktop/res1.dat", "r") as f:
+			ret["self"] = eval(f.readline())			
+
+		return ret
 
 	async def get_geo_distribution(self, ips, length):
 		ret = {"self": [], "opposite": []}
@@ -21,7 +30,10 @@ class GeoDistributionModel(object):
 				url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?IpSets=%s:32&TableName=%s&Mode=1" % (ip, date)
 				proxy = {"http": "http://yunyang:yangyun123@202.112.23.167:8080"}
 				r = requests.get(url, proxies=proxy)
-				res = r.json()[ip+":32"]
+				try:
+					res = r.json()[ip+":32"]
+				except:
+					continue
 
 				for item in res:
 					if len(item) == 0:

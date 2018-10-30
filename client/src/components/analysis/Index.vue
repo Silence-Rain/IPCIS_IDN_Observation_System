@@ -7,8 +7,8 @@
 					<div class="nav-head">
 						<div class="nav-head-logo">IPCIS</div>
 						<div class="nav-head-title">
-							<div>域名信息累计观测系统</div>
-							<div>Domains Information Accumulative Observation System</div>
+							<div>国际化域名累计观测系统</div>
+							<div>Accumulative International Domain Name Observation System</div>
 						</div>
 					</div>
 				</Menu>
@@ -23,21 +23,17 @@
 							已知域名列表
 						</MenuItem>
 						<MenuItem name="0">
-							<Icon type="ios-information"></Icon>
+							<Icon type="ios-information-circle-outline"/>
 							域名基本信息
 						</MenuItem>
-						<Submenu name="-1">
-							<template slot="title">
-								<Icon type="ios-albums"></Icon>
-								域名实时动态
-							</template>
-							<MenuItem name="2">
-								通信对象地理位置分布
-							</MenuItem>
-							<MenuItem name="1">
-								通信对象网络拓扑
-							</MenuItem>
-						</Submenu>
+						<MenuItem name="2">
+							<Icon type="ios-locate"></Icon>
+							通信对象地理分布
+						</MenuItem>
+						<MenuItem name="1">
+							<Icon type="ios-git-network"></Icon>
+							通信对象网络拓扑
+						</MenuItem>
 					</Menu>
 				</Sider>
 

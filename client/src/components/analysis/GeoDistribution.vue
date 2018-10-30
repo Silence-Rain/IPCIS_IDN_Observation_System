@@ -14,15 +14,15 @@
             <p style="font-size:35px;font-weight:bold;margin-left:10px;">{{opposite_count}}</p>
         </Card>
 
-		<div class="label">地理分布 - 按管理归属聚合</div>
+		<div class="label">对端地理分布 - 按管理归属聚合</div>
 		<Table stripe :loading="isLoading" :columns="cols_auth" :data="auth_list"></Table>
 		<Page style="margin:10px;" :total="auth_length" :current="auth_page" :page-size="10" show-total @on-change="changeAuthPage"></Page>
 
-		<div class="label">地理分布 - 按地理位置聚合</div>
+		<div class="label">对端地理分布 - 按地理位置聚合</div>
 		<Table stripe :loading="isLoading" :columns="cols_location" :data="location_list"></Table>
 		<Page style="margin:10px;" :total="location_length" :current="location_page" :page-size="10" show-total @on-change="changeLocationPage"></Page>
 
-		<div class="label">地理分布 - 地图</div>
+		<div class="label">对端地理分布 - 地图</div>
 		<hr color="#f5f7f9"/>
 		<keep-alive>
 			<div id="chart" style="width:100%;height:500px;margin-left:10px;"></div>
@@ -71,8 +71,8 @@
 				let ret = []
 				for (var item of this.raw["self"]) {
 					let temp = {
-				        name: "解析 IP",
-				        location: "",
+				        name: "--",
+				        location: item.location,
 				        ip: item.ip,
 				        geometry: {
 				            type: 'Point',
@@ -130,11 +130,12 @@
 		methods: {
 			selectChange () {
 				this.requestIPRecord()
+				this.cluster()
 			},
 			requestIPRecord () {
 				// 请求解析IP活动
 				this.axios.post(this.baseUrl + "/location", 
-					JSON.stringify({ips: ["211.65.193.23"], length: this.time_length}))
+					JSON.stringify({ips: this.ips, length: this.time_length}))
 					.then((response) => {
 						this.raw = response.data.result
 
@@ -165,6 +166,9 @@
 						location_set[item.location] = 1
 					}
 				}
+
+				this.auth_cluster = []
+				this.location_cluster = []
 
 				for (let item in auth_set) {
 					this.auth_cluster.push({auth: item, count: auth_set[item]})
