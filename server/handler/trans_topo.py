@@ -4,7 +4,7 @@ from handler.base import BaseHandler
 from handler.exceptions import *
 import routes
 
-class DomainListHandler(BaseHandler):
+class TransTopoHandler(BaseHandler):
 
 	"""
 		@api {get}	/list  已知恶意域名
@@ -25,13 +25,13 @@ class DomainListHandler(BaseHandler):
 			]
 	"""
 
-	async def get(self):
-		res = await self.db.list.get_known_idns()
-		res_lang = await self.db.list.get_all_langs()
-
-		self.finish_success(result={"res": res, "all_lang": res_lang})
+	async def post(self):
+		ips = self.get_argument("ips")
+		length = self.get_argument("length")
+		res = await self.db.topo.get_max_topo(ips, length)
+		self.finish_success(result=res)
 
 
 routes.handlers += [
-	(r'/list', DomainListHandler)
+	(r'/topo', TransTopoHandler)
 ]

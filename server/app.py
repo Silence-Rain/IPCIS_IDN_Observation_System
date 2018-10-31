@@ -12,17 +12,17 @@ define("DEBUG", default=True, help="是否开启debug模式", type=bool)
 define("TEST", default=False, help="测试服务器,支持跨域访问,推送测试模式", type=bool)
 tornado.options.parse_command_line()
 
-db = Database(MySQL(
+db = MySQL(
 		host=DNS_HOST,
 		user=DNS_USER,
 		passwd=DNS_PASSWD,
 		port=DNS_PORT,
 		db=DNS_DB
-	))
+	)
 
 application = tornado.web.Application(
 		handlers=routes.handlers,
-		db=db,
+		db=Database(db),
 		TEST=options.TEST,
 		debug=options.DEBUG,
 		autoreload=True,

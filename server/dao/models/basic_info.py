@@ -1,5 +1,6 @@
 #!coding=utf8
 
+import requests
 from IPy import *
 
 class BasicInfoModel(object):
@@ -9,7 +10,10 @@ class BasicInfoModel(object):
 	def basic_formatter(self, raw, labels):
 		ret = {}
 		for index, label in enumerate(labels):
-			ret[label] = raw[index]
+			if raw != None:
+				ret[label] = raw[index]
+			else:
+				ret[label] = "-"
 
 		return ret
 
@@ -22,16 +26,59 @@ class BasicInfoModel(object):
 		ret["lang"] = rs[3]
 		ret["ip"] = []
 
-		for item in eval(rs[2]):
-			ret["ip"].append({"ip": str(IP(item))})
+		proxy = {"http": "http://yunyang:yangyun123@202.112.23.167:8080"}
+		url_tables = "http://211.65.197.210:8080/IPCIS/activityDatabase/?Mode=3"
+		r_tables = requests.get(url_tables, proxies=proxy)
+		tables = r_tables.json()["tables"]
+		date = tables[-1]
 
+		for i in eval(rs[2]):
+			ip_str = str(IP(i))
+			url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?IpSets=%s:32&TableName=%s&Mode=1" % (ip_str, date)
+			r = requests.get(url, proxies=proxy)
+			try:
+				res = r.json()[ip_str+":32"]
+			except Exception as e:
+				print(e)
+				ret["ip"].append({"ip": ip_str, "location": "暂无结果", "auth": "暂无结果"})
+
+			# 获得解析IP归属
+			if len(res[0]) == 0:
+				if len(res[1]) == 0:
+					ret["ip"].append({"ip": ip_str, "location": "暂无结果", "auth": "暂无结果"})
+				else:
+					target_pos = res[1][0].split("$")[-2:]
+					ret["ip"].append({"ip": ip_str, "location": target_pos[0], "auth": target_pos[1]})
+			else:
+				target_pos = res[0][0].split("$")[-2:]
+				ret["ip"].append({"ip": ip_str, "location": target_pos[0], "auth": target_pos[1]})
+			
 		return ret
 
 	async def get_whois_info(self, domain):
-		rs_whois = await self.db.get(
-			"SELECT registrar,registrant,address,email,register_date,expire_date FROM domain_whois WHERE primary_domain='%s';" % pd)
+		suffixes = []
+		with open("data/Internet_Domains_Suffixes") as f:
+			for line in f.readlines():
+				suffixes.append(line.strip().lower()[1:])
+
+		labels = domain.split(".")
+		labels.reverse()
+		pds = []
+		for item in labels:
+			pds.append(item)
+			if item not in suffixes:
+				break
+		pds.reverse()
+		pd = ".".join(pds)
+
+		try:
+			rs_whois = await self.db.get(
+				"SELECT registrar,registrant,address,email,register_date,expire_date FROM domain_whois WHERE primary_domain='%s';" % pd)
+		except:
+			rs_whois = None
 		ret = {}
 		ret["domain_name"] = domain
 		ret["whois"] = self.basic_formatter(rs_whois, ["registrar","registrant","address","email","register_date","expire_date"])
 
 		return ret
+

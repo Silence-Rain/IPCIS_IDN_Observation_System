@@ -71,7 +71,7 @@
 				let ret = []
 				for (var item of this.raw["self"]) {
 					let temp = {
-				        name: "--",
+				        name: item.auth,
 				        location: item.location,
 				        ip: item.ip,
 				        geometry: {

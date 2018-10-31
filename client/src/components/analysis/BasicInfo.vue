@@ -95,18 +95,18 @@
 					this.localLoading = false
 					this.$Message.error("网络错误，请稍后再试！")
 				})
-			// // 请求域名whois信息
-			// this.remoteLoading = true
-			// this.axios.post(this.baseUrl + "/info/whois", 
-			// 	JSON.stringify({domain_name: this.targetDomain}))
-			// 	.then((response) => {
-			// 		this.remoteLoading = false
-			// 		this.whoisInfo = [response.data.result.whois]
-			// 	})
-			// 	.catch((response) => {
-			// 		this.remoteLoading = false
-			// 		this.$Message.error("网络错误，请稍后再试！")
-			// 	})
+			// 请求域名whois信息
+			this.remoteLoading = true
+			this.axios.post(this.baseUrl + "/info/whois", 
+				JSON.stringify({domain_name: this.targetDomain}))
+				.then((response) => {
+					this.remoteLoading = false
+					this.whoisInfo = [response.data.result.whois]
+				})
+				.catch((response) => {
+					this.remoteLoading = false
+					this.$Message.error("网络错误，请稍后再试！")
+				})
 			
 		},
 

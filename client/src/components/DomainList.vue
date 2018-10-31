@@ -52,6 +52,12 @@
 						<Col span="23">
 							<Card class="card">
 								<p slot="title">地理分布概览</p>
+								<div class="select">
+									选择语种：
+									<Select v-model="lang" style="width:150px;height:20px;margin:0 10px;" @on-change="selectChange" filterable>
+										<Option v-for="item in langs" :value="item" :key="item">{{ item }}</Option>
+									</Select>
+								</div>
 								<keep-alive>
 									<div id="geo_map" style="width:100%;height:550px;"></div>
 								</keep-alive>
@@ -87,6 +93,8 @@
 				rawActs: [],				// 所有已知域名活动数据
 				distributionPie: null,
 				distributionBar: null,
+				langs: [],
+				lang: "全部语种",
 				tableHeader: [
 					{
 						title: "域名",
@@ -149,7 +157,8 @@
 				let ret = []
 				for (var item of this.rawActs["self"]) {
 					let temp = {
-						name: "--",
+						auth: item.auth,
+						domain: item.domain,
 						location: item.location,
 						ip: item.ip,
 						geometry: {
@@ -158,22 +167,6 @@
 						},
 						style: {
 							backgroundColor: "#0F0",
-							size: 5,
-						}
-					}
-					ret.push(temp)
-				}
-				for (var item of this.rawActs["opposite"]) {
-					let temp = {
-						name: item.auth,
-						location: item.location,
-						ip: item.ip,
-						geometry: {
-							type: 'Point',
-							coordinates: [item.lng, item.lat]
-						},
-						style: {
-							backgroundColor:"#FF8C00",
 							size: 5,
 						}
 					}
@@ -213,6 +206,7 @@
 					this.distributionPie.hideLoading()
 					this.distributionBar.hideLoading()
 
+					this.langs = ["全部语种"].concat(response.data.result.all_lang)
 					for (var item of response.data.result.res) {
 						this.rawList.push(this.formatter(item))
 					}
@@ -236,19 +230,22 @@
 					this.$Message.error("网络错误，请稍后再试！");
 				})
 
-
 			// 请求解析IP活动
-			this.axios.post(this.baseUrl + "/location_all")
-				.then((response) => {
-					this.rawActs = response.data.result
-					// 得到数据后初始化地图
-					this.mapInit(this.acts)
-				})
-				.catch((response) => {
-					this.$Message.error("网络错误，请稍后再试！")
-				})
+			this.requestIPRecord()			
 		},
 		methods: {
+			requestIPRecord () {
+				this.axios.post(this.baseUrl + "/location_all", 
+					JSON.stringify({lang: this.lang || "全部语种" }))
+					.then((response) => {
+						this.rawActs = response.data.result
+						// 得到数据后初始化地图
+						this.mapInit(this.acts)
+					})
+					.catch((response) => {
+						this.$Message.error("网络错误，请稍后再试！")
+					})
+			},
 			// 初始化饼状图
 			pieInit (data) {
     			let legendData = []
@@ -367,7 +364,7 @@
 						show: true,
 						formatter: (params) => {
 							return (
-								"<div><div>IP："+params.ip+"</div><div>管理归属："+params.name+"</div><div>位置："+params.location+"</div></div>"
+								"<div><div>域名："+params.domain+"</div><div>IP："+params.ip+"</div><div>管理归属："+params.auth+"</div><div>位置："+params.location+"</div></div>"
 							);
 						},
 						offsets: {
@@ -394,7 +391,7 @@
 			redirectTo (data, index) {
 				this.$router.push({
 					name: "Index", 
-					params: {"domain_name": this.rawList[(this.curPage - 1) * 10 + index].domain_name}
+					params: {"domain_name": this.list[(this.curPage - 1) * 10 + index].domain_name}
 				})
 			},
 
@@ -415,6 +412,10 @@
 			changePage (page) {
 				this.curPage = page
 			},
+
+			selectChange () {
+				this.requestIPRecord()
+			}
 		}
 	}
 </script>
@@ -464,6 +465,15 @@
 	align-items: left;
 	margin: 20px;
 	width: 100%;
+}
+.select{
+	height: 40px;
+	display: flex;
+	flex-direction: row;
+	vertical-align: center;
+	line-height: 40px;
+	font-size: 15px;
+	margin-bottom: 10px;
 }
 .list-action{
 	position: relative;

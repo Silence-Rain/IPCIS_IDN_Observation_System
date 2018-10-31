@@ -54,7 +54,8 @@ class GeoDistributionAllHandler(BaseHandler):
 	"""
 
 	async def post(self):
-		res = await self.db.geo.get_all_geo_distribution()
+		lang = self.get_argument("lang")
+		res = await self.db.geo.get_all_geo_distribution(lang)
 		self.finish_success(result=res)
 
 

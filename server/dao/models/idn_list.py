@@ -12,10 +12,13 @@ class IDNListModel(object):
 
 		return ret
 
-	async def add_idn(self, domain, val):
-		ttl = val["ttl"] if "ttl" in val else None
-		timestamp = val["timestamp"] if "timestamp" in val else None
-		ip = val["ip"] if "ip" in val else None
-		lang = val["lang"] if "lang" in val else None
+	async def get_all_langs(self):
+		ret = []
+		try:
+			rs = await self.db.query("SELECT DISTINCT(lang) FROM known_idns;")
+		except:
+			rs = []
+		for item in rs:
+			ret.append(item[0])
 
-		sql = "INSERT INTO known_idns VALUES (%s, %s)"
+		return ret
