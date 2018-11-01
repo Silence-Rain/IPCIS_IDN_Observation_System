@@ -5,10 +5,12 @@
 	    
 	    <hr color="#f5f7f9"/>
 	    <div class="label">域名 whois 信息</div>
-	    <Table stripe :loading="remoteLoading" :columns="whoisCol" :data="whoisInfo"></Table>
+	    <Button class="export" type="primary" @click="exportData(0)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
+	    <Table stripe :loading="remoteLoading" :columns="whoisCol" :data="whoisInfo" ref="whois"></Table>
 	    <hr color="#f5f7f9"/>
 	    <div class="label">域名解析 IP 信息</div>
-	    <Table stripe :loading="localLoading" :columns="ipCol" :data="ipInfo"></Table>
+	    <Button class="export" type="primary" @click="exportData(1)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
+	    <Table stripe :loading="localLoading" :columns="ipCol" :data="ipInfo" ref="ip"></Table>
 	</div>
 </template>
 
@@ -111,6 +113,13 @@
 		},
 
 		methods: {
+			exportData (type) {
+				let types = ["whois", "ip"]
+				let names = ["whois信息", "解析IP信息"]
+				this.$refs[types[type]].exportCsv({
+                    filename: `${this.targetDomain}-${names[type]}`
+                })
+			},
 			// 获取解析IP列表
 			getResolvedIPs () {
 				let ret = []
@@ -131,5 +140,8 @@ hr{
 .label{
     margin: 10px;
     font-size: 16px;
+}
+.export{
+	margin-bottom: 10px;
 }
 </style>

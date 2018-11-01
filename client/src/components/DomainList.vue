@@ -22,8 +22,9 @@
 								<p slot="title">已收集国际化域名列表（点击查看详情）</p>
 								<div class="list-action">
 									<Input class="searchbar" v-model="searchTarget" icon="search" placeholder="搜索域名，语种"></Input>
+									<Button type="primary" @click="exportData"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
 								</div>
-								<Table style="margin:10px" stripe :loading="isLoading" :columns="tableHeader" :data="showList" @on-row-click="redirectTo"></Table>
+								<Table style="margin:10px" stripe :loading="isLoading" :columns="tableHeader" :data="showList" @on-row-click="redirectTo" ref="idns"></Table>
 								<Page style="margin:10px;" :total="length" :current="curPage" :page-size="10" show-total @on-change="changePage"></Page>
 							</Card>
 						</Col>
@@ -245,6 +246,13 @@
 					.catch((response) => {
 						this.$Message.error("网络错误，请稍后再试！")
 					})
+			},
+			exportData () {
+				this.$refs.idns.exportCsv({
+                    filename: `已知国际化域名-${this.searchTarget || "全部语种"}`,
+                    columns: this.tableHeader,
+                    data: this.list
+                })
 			},
 			// 初始化饼状图
 			pieInit (data) {
@@ -483,6 +491,7 @@
 .searchbar{
 	width: 200px;
 	border-radius: 16px;
+	margin-right: 20px;
 }
 .label{
 	margin: 10px;

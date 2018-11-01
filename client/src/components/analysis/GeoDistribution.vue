@@ -15,11 +15,13 @@
         </Card>
 
 		<div class="label">对端地理分布 - 按管理归属聚合</div>
-		<Table stripe :loading="isLoading" :columns="cols_auth" :data="auth_list"></Table>
+		<Button class="export" type="primary" @click="exportData(0)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
+		<Table stripe :loading="isLoading" :columns="cols_auth" :data="auth_list" ref="auth"></Table>
 		<Page style="margin:10px;" :total="auth_length" :current="auth_page" :page-size="10" show-total @on-change="changeAuthPage"></Page>
 
 		<div class="label">对端地理分布 - 按地理位置聚合</div>
-		<Table stripe :loading="isLoading" :columns="cols_location" :data="location_list"></Table>
+		<Button class="export" type="primary" @click="exportData(1)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
+		<Table stripe :loading="isLoading" :columns="cols_location" :data="location_list" ref="location"></Table>
 		<Page style="margin:10px;" :total="location_length" :current="location_page" :page-size="10" show-total @on-change="changeLocationPage"></Page>
 
 		<div class="label">对端地理分布 - 地图</div>
@@ -38,6 +40,7 @@
 			return {
 				time_length: 1,
 				time_range: [1, 2, 3, 4, 5, 6, 7],
+				domain: "",
 				ips: [],					// 目标域名解析IP列表
 				raw: [],					// 原始IP活动数据
 				opposite_count: 0,
@@ -119,7 +122,8 @@
 		},
 
 		created () {
-			// 从localStorage中获取解析IP列表
+			// 从localStorage中获取解析IP列表和域名
+			this.domain = localStorage.getItem("domain")
 			this.ips = JSON.parse(localStorage.getItem("ips"))
 		},
 
@@ -131,6 +135,15 @@
 			selectChange () {
 				this.requestIPRecord()
 				this.cluster()
+			},
+			exportData (type) {
+				let types = ["auth", "location"]
+				let names = ["管理归属", "地理位置"]
+				this.$refs[types[type]].exportCsv({
+                    filename: `${this.domain}-${names[type]}`,
+                    columns: type == 0 ? this.cols_auth : this.cols_location,
+                    data: ttype == 0 ? this.auth_cluster : this.location_cluster,
+                })
 			},
 			requestIPRecord () {
 				// 请求解析IP活动
@@ -248,6 +261,9 @@ hr{
 	vertical-align: center;
 	line-height: 40px;
 	font-size: 15px;
+}
+.export{
+	margin-bottom: 10px;
 }
 .card{
 	display: flex;
