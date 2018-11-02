@@ -5,6 +5,7 @@ sys.path.append("../")
 from config import *
 from dao.mysql import MySQL
 
+# 聚类相同域名的解析IP
 def cluster(path):
 	ret = []
 	with io.open(path, "r", encoding="utf8") as f:
