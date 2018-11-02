@@ -1,3 +1,4 @@
 module.exports = {
-	//baseUrl: "/IDN_Observation"	
+	// 正式环境配置
+	baseUrl: process.env.NODE_ENV === "production" ? "/IDN_Observation" : ""
 }
