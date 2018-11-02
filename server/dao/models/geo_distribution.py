@@ -6,15 +6,15 @@ import time
 import json
 
 class GeoDistributionModel(object):
-	def __init__(self, db):
-		self.db = db
 
+	# 获取指定语种IDN的解析IP地理位置（从文件读取）
 	async def get_all_geo_distribution(self, lang):
 		ret = {"self":[]}
 		temp = []
 		with open("data/res.dat", "r") as f:
 			temp = eval(f.readline())
 
+		# 根据传入参数过滤语种
 		if lang != "全部语种":
 			for item in temp:
 				if item["lang"] == lang:
@@ -24,14 +24,15 @@ class GeoDistributionModel(object):
 
 		return ret
 
+	# 获取某个域名，在最近几天内的通信对端解析IP地理位置（向流记录库中查询）
 	async def get_geo_distribution(self, ips, length):
 		ret = {"self": [], "opposite": []}
 		opposite_ips = []
 
+		# 取有记录的日期里，最近length天
 		proxy = {"http": "http://yunyang:yangyun123@202.112.23.167:8080"}
 		url_tables = "http://211.65.197.210:8080/IPCIS/activityDatabase/?Mode=3"
 		r_tables = requests.get(url_tables, proxies=proxy)
-		# 取有记录的日期里，最近length天
 		tables = r_tables.json()["tables"][-length:]
 
 		for date in tables:
@@ -48,11 +49,9 @@ class GeoDistributionModel(object):
 				self_flag = False
 				if len(item) == 0:
 					continue
-				# 获得解析IP经纬度，只记录一次
+				# 获得解析IP经纬度，管理归属，地理位置，只记录一次
 				if not self_flag:
 					self_flag = True
-
-					# 获得解析IP经纬度，只记录一次
 					target_pos = item[0].split(" ")[13:]
 					auth_location = " ".join(target_pos).split("$")
 					lnglat = auth_location[0].split(" ")

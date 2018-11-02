@@ -6,9 +6,8 @@ import time
 import json
 
 class TransTopoModel(object):
-	def __init__(self, db):
-		self.db = db
-
+	
+	# 获取指定域名，在最近几天内所有通信对端的拓扑网络
 	async def get_max_topo(self, ips, length):
 
 		node = []
@@ -16,10 +15,10 @@ class TransTopoModel(object):
 		opposite = []
 		link = []
 
+		# 取有记录的日期里，最近length天
 		proxy = {"http": "http://yunyang:yangyun123@202.112.23.167:8080"}
 		url_tables = "http://211.65.197.210:8080/IPCIS/activityDatabase/?Mode=3"
 		r_tables = requests.get(url_tables, proxies=proxy)
-		# 取有记录的日期里，最近length天
 		tables = r_tables.json()["tables"][-length:]
 
 		for date in tables:

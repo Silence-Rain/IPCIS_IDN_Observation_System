@@ -7,22 +7,31 @@ import routes
 class GeoDistributionHandler(BaseHandler):
 
 	"""
-		@api {get}	/list  已知恶意域名
-		@apiGroup	list
+		@api {post}	/location  获取通信对端IP地理信息
+		@apiGroup	location
 		@apiVersion	1.0.0
-		@apiDescription 获取已知恶意域名列表
+		@apiDescription 对指定域名，获取指定时间段内所有通信对端地理位置与归属信息
 		@apiPermission all
 
+		@apiParam	{String}	ips		要查询的域名解析IP
+		@apiParam	{Number}	length	要查询的天数
 		@apiSuccess	{String}	status	"success"
-		@apiSuccess	{JSON}		result	已知恶意域名列表
+		@apiSuccess	{JSON}		result	所有通信对端地理位置与归属信息
 
 		@apiSuccessExample {json} 正常响应:
 			HTTP/1.1 200 OK
-			[
-			    "www.test.com",
-			    "tieba.baidu.com"
-			    ...
-			]
+			{
+				"self": [
+					{
+						"ip": "118.89.140.118",
+						"location": "中国-上海-上海",
+						"auth": "中国-教育网-上海交通大学",
+						"lng": 118.90,
+						"lat": 32.43
+					},
+					...
+				]
+			}
 	"""
 
 	async def post(self):
@@ -35,22 +44,39 @@ class GeoDistributionHandler(BaseHandler):
 class GeoDistributionAllHandler(BaseHandler):
 
 	"""
-		@api {get}	/list  已知恶意域名
-		@apiGroup	list
+		@api {get}	/location_all  获取所有IDN解析IP地理信息
+		@apiGroup	location
 		@apiVersion	1.0.0
-		@apiDescription 获取已知恶意域名列表
+		@apiDescription 获取指定语种的所有IDN解析IP地理信息
 		@apiPermission all
 
+		@apiParam	{String}	lang	要查询的语种
 		@apiSuccess	{String}	status	"success"
-		@apiSuccess	{JSON}		result	已知恶意域名列表
+		@apiSuccess	{JSON}		result	所有解析IP地理位置与归属信息
 
 		@apiSuccessExample {json} 正常响应:
 			HTTP/1.1 200 OK
-			[
-			    "www.test.com",
-			    "tieba.baidu.com"
-			    ...
-			]
+			{
+				"self": [
+					{
+						"ip": "118.89.140.118",
+						"location": "中国-上海-上海",
+						"auth": "中国-教育网-上海交通大学",
+						"lng": 118.90,
+						"lat": 32.43
+					}
+				], 
+				"opposite": [
+					{
+						"ip": "211.65.193.23",
+						"location": "中国-江苏-南京",
+						"auth": "中国-教育网-东南大学",
+						"lng": 112.87,
+						"lat": 31.66
+					},
+					...
+				]
+			}
 	"""
 
 	async def post(self):

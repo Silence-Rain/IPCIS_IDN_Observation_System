@@ -7,22 +7,39 @@ import routes
 class TransTopoHandler(BaseHandler):
 
 	"""
-		@api {get}	/list  已知恶意域名
-		@apiGroup	list
+		@api {post}	/topo  获取通信对端IP拓扑网络
+		@apiGroup	topo
 		@apiVersion	1.0.0
-		@apiDescription 获取已知恶意域名列表
+		@apiDescription 对指定域名，获取指定时间段内所有通信对端拓扑网络
 		@apiPermission all
 
+		@apiParam	{String}	ips		要查询的域名解析IP
+		@apiParam	{Number}	length	要查询的天数
 		@apiSuccess	{String}	status	"success"
-		@apiSuccess	{JSON}		result	已知恶意域名列表
+		@apiSuccess	{JSON}		result	所有通信对端的拓扑网络
 
 		@apiSuccessExample {json} 正常响应:
 			HTTP/1.1 200 OK
-			[
-			    "www.test.com",
-			    "tieba.baidu.com"
-			    ...
-			]
+			{
+				"nodes": [
+					{
+						"id": 0, 
+						"name": "118.89.140.118"
+					},
+					{
+						"id": 1, 
+						"name": "211.65.193.23"
+					},
+					...
+				], 
+				"links": [
+					{
+						"source": 0, 
+						"target": 1
+					},
+					...
+				]
+			}
 	"""
 
 	async def post(self):
