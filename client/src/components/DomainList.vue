@@ -249,64 +249,64 @@
 			},
 			exportData () {
 				this.$refs.idns.exportCsv({
-                    filename: `已知国际化域名-${this.searchTarget || "全部语种"}`,
-                    columns: this.tableHeader,
-                    data: this.list
-                })
+					filename: `已知国际化域名-${this.searchTarget || "全部语种"}`,
+					columns: this.tableHeader,
+					data: this.list
+				})
 			},
 			// 初始化饼状图
 			pieInit (data) {
-    			let legendData = []
-    			let seriesData = []
-    			let seriesDataRaw = {}
-    			let selected = {}
+				let legendData = []
+				let seriesData = []
+				let seriesDataRaw = {}
+				let selected = {}
 
-    			for (let i in data) {
-    				let item = data[i]
-    				if (legendData.indexOf(item.lang) == -1) {
-    					legendData.push(item.lang)
-    					seriesDataRaw[item.lang] = 1
-    				} else {
-    					seriesDataRaw[item.lang] += 1
-    				}
-    			}
-    			for (let i in seriesDataRaw) {
-    				let item = seriesDataRaw[i]
-    				seriesData.push({name: i, value: item, label: {show: item > 10}, labelLine: {show: item > 10}})
-    			}
-    			seriesData.sort((a, b) => b.value - a.value)
-    			this.aaaa = seriesData
+				for (let i in data) {
+					let item = data[i]
+					if (legendData.indexOf(item.lang) == -1) {
+						legendData.push(item.lang)
+						seriesDataRaw[item.lang] = 1
+					} else {
+						seriesDataRaw[item.lang] += 1
+					}
+				}
+				for (let i in seriesDataRaw) {
+					let item = seriesDataRaw[i]
+					seriesData.push({name: i, value: item, label: {show: item > 10}, labelLine: {show: item > 10}})
+				}
+				seriesData.sort((a, b) => b.value - a.value)
+				this.aaaa = seriesData
 
 				let option = {
-				    tooltip : {
-				        trigger: 'item',
-				        formatter: "{a} <br/>{b} : {c} ({d}%)"
-				    },
-				    legend: {
-				        type: 'scroll',
-				        orient: 'vertical',
-				        right: 10,
-				        top: 20,
-				        bottom: 20,
-				        data: legendData,
-				        selected: selected
-				    },
-				    series : [
-				        {
-				            name: '域名数量',
-				            type: 'pie',
-				            radius : '55%',
-				            center: ['40%', '50%'],
-				            data: seriesData,
-				            itemStyle: {
-				                emphasis: {
-				                    shadowBlur: 10,
-				                    shadowOffsetX: 0,
-				                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-				                }
-				            }
-				        }
-				    ]
+					tooltip : {
+						trigger: 'item',
+						formatter: "{a} <br/>{b} : {c} ({d}%)"
+					},
+					legend: {
+						type: 'scroll',
+						orient: 'vertical',
+						right: 10,
+						top: 20,
+						bottom: 20,
+						data: legendData,
+						selected: selected
+					},
+					series : [
+						{
+							name: '域名数量',
+							type: 'pie',
+							radius : '55%',
+							center: ['40%', '50%'],
+							data: seriesData,
+							itemStyle: {
+								emphasis: {
+									shadowBlur: 10,
+									shadowOffsetX: 0,
+									shadowColor: 'rgba(0, 0, 0, 0.5)'
+								}
+							}
+						}
+					]
 				}
 
 				return option
@@ -321,32 +321,32 @@
 				}
 				let option = {
 					tooltip : {
-			            trigger: 'axis',
-			            axisPointer: {
-			                type: 'shadow',
-			                label: {
-			                    show: true
-			                }
-			            }
-			        },
-				    xAxis: {
-				        type: 'category',
-				        name: "语种",
-				        axisLabel: {
-				        	rotate: 60
-				        },
-				        data: xlabel
-				    },
-				    yAxis: {
-				        type: 'value',
-				        name: '数量',
-				        splitNumber: 10,
-				    },
-				    series: [{
-				        data: ydata,
-				        type: 'bar',
-				        color: ["#2f4554"]
-				    }]
+						trigger: 'axis',
+						axisPointer: {
+							type: 'shadow',
+							label: {
+								show: true
+							}
+						}
+					},
+					xAxis: {
+						type: 'category',
+						name: "语种",
+						axisLabel: {
+							rotate: 60
+						},
+						data: xlabel
+					},
+					yAxis: {
+						type: 'value',
+						name: '数量',
+						splitNumber: 10,
+					},
+					series: [{
+						data: ydata,
+						type: 'bar',
+						color: ["#2f4554"]
+					}]
 				}
 
 				return option

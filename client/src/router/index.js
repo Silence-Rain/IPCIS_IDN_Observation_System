@@ -10,32 +10,32 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    {
-    	path: "/",
-    	name: "DomainList",
-    	component: DomainList
-    },
-    {
-    	path: "/analysis",
-    	name: "Index",
-    	component: Index,
-    	children:[
-    		{
-		    	path: "/info",
-		    	name: "BasicInfo",
-		    	component: BasicInfo
-		    },
-		    {
-		    	path: "/map",
-		    	name: "GeoDistribution",
-		    	component: GeoDistribution
-		    },
-		    {
-		    	path: "/topo",
-		    	name: "TransTopo",
-		    	component: TransTopo
-		    }
-    	]
-    }
+	{
+		path: "/",
+		name: "DomainList",
+		component: DomainList
+	},
+	{
+		path: "/analysis",
+		name: "Index",
+		component: Index,
+		children:[
+			{
+				path: "/info",
+				name: "BasicInfo",
+				component: BasicInfo
+			},
+			{
+				path: "/map",
+				name: "GeoDistribution",
+				component: GeoDistribution
+			},
+			{
+				path: "/topo",
+				name: "TransTopo",
+				component: TransTopo
+			}
+		]
+	}
   ]
 })

@@ -10,9 +10,9 @@
 		<hr color="#f5f7f9"/>
 		<div class="label">概览</div>
 		<Card class="card">
-            <p slot="title">通信对端 IP 总数</p>
-            <p style="font-size:35px;font-weight:bold;margin-left:10px;">{{opposite_count}}</p>
-        </Card>
+			<p slot="title">通信对端 IP 总数</p>
+			<p style="font-size:35px;font-weight:bold;margin-left:10px;">{{opposite_count}}</p>
+		</Card>
 
 		<div class="label">对端地理分布 - 按管理归属聚合</div>
 		<Button class="export" type="primary" @click="exportData(0)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
@@ -48,23 +48,23 @@
 				auth_cluster: [],
 				location_cluster: [],
 				cols_auth: [{
-                    title: "管理归属",
-                    key: "auth"
-                },
-                {
-                    title: "通信对端数",
-                    key: "count"
-                }],
+					title: "管理归属",
+					key: "auth"
+				},
+				{
+					title: "通信对端数",
+					key: "count"
+				}],
 				cols_location: [{
-                    title: "位置",
-                    key: "location"
-                },
-                {
-                    title: "通信对端数",
-                    key: "count"
-                }],
-                auth_page: 1,
-                location_page: 1
+					title: "位置",
+					key: "location"
+				},
+				{
+					title: "通信对端数",
+					key: "count"
+				}],
+				auth_page: 1,
+				location_page: 1
 			}
 		},
 
@@ -74,34 +74,34 @@
 				let ret = []
 				for (var item of this.raw["self"]) {
 					let temp = {
-				        name: item.auth,
-				        location: item.location,
-				        ip: item.ip,
-				        geometry: {
-				            type: 'Point',
-				            coordinates: [item.lng, item.lat]
-				        },
-				        style: {
-				            backgroundColor: "#0F0",
-				            size: 5,
-				        }
-				    }
+						name: item.auth,
+						location: item.location,
+						ip: item.ip,
+						geometry: {
+							type: 'Point',
+							coordinates: [item.lng, item.lat]
+						},
+						style: {
+							backgroundColor: "#0F0",
+							size: 5,
+						}
+					}
 					ret.push(temp)
 				}
 				for (var item of this.raw["opposite"]) {
 					let temp = {
-				        name: item.auth,
-				        location: item.location,
-				        ip: item.ip,
-				        geometry: {
-				            type: 'Point',
-				            coordinates: [item.lng, item.lat]
-				        },
-				        style: {
-				            backgroundColor:"#FF8C00",
-				            size: 5,
-				        }
-				    }
+						name: item.auth,
+						location: item.location,
+						ip: item.ip,
+						geometry: {
+							type: 'Point',
+							coordinates: [item.lng, item.lat]
+						},
+						style: {
+							backgroundColor:"#FF8C00",
+							size: 5,
+						}
+					}
 					ret.push(temp)
 				}
 
@@ -140,10 +140,10 @@
 				let types = ["auth", "location"]
 				let names = ["管理归属", "地理位置"]
 				this.$refs[types[type]].exportCsv({
-                    filename: `${this.domain}-${names[type]}`,
-                    columns: type == 0 ? this.cols_auth : this.cols_location,
-                    data: ttype == 0 ? this.auth_cluster : this.location_cluster,
-                })
+					filename: `${this.domain}-${names[type]}`,
+					columns: type == 0 ? this.cols_auth : this.cols_location,
+					data: ttype == 0 ? this.auth_cluster : this.location_cluster,
+				})
 			},
 			requestIPRecord () {
 				// 请求解析IP活动

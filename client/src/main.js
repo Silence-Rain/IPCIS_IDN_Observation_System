@@ -15,8 +15,8 @@ Vue.prototype.baseUrl = "http://localhost:8888"				// 服务端基础url
 axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
 new Vue({
-  router,
-  components: { App },
-  template: '<App/>',
-  render: h => h(App)
+	router,
+	components: { App },
+	template: '<App/>',
+	render: h => h(App)
 }).$mount('#app')

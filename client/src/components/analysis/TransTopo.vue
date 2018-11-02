@@ -10,9 +10,9 @@
 		<hr color="#f5f7f9"/>
 		<div class="label">概览</div>
 		<Card class="card">
-            <p slot="title">通信对端 IP 总数</p>
-            <p style="font-size:35px;font-weight:bold;margin-left:10px;">{{opposite_count}}</p>
-        </Card>
+			<p slot="title">通信对端 IP 总数</p>
+			<p style="font-size:35px;font-weight:bold;margin-left:10px;">{{opposite_count}}</p>
+		</Card>
 
 		<div>
 			<keep-alive>
@@ -129,18 +129,18 @@
 					},
 					// 图例
 					legend: {
-				        type: 'scroll',
-				        orient: 'vertical',
-				        right: 10,
-				        top: 20,
-				        bottom: 20,
-				        data: categories.map(function (item) {
+						type: 'scroll',
+						orient: 'vertical',
+						right: 10,
+						top: 20,
+						bottom: 20,
+						data: categories.map(function (item) {
 							return item.name;
 						})
-				    },
+					},
 					// 提示气泡
 					tooltip: {
-				    },
+					},
 					// 下载图片按钮
 					toolbox: {
 						feature: {

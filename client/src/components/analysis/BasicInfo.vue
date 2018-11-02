@@ -2,15 +2,15 @@
 	<div>
 		<Tag type="dot" color="primary">{{ lang }}</Tag>
 		<!-- <Tag v-if="!isIdentical" type="dot" color="error">whois信息与解析IP信息不符</Tag> -->
-	    
-	    <hr color="#f5f7f9"/>
-	    <div class="label">域名 whois 信息</div>
-	    <Button class="export" type="primary" @click="exportData(0)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
-	    <Table stripe :loading="remoteLoading" :columns="whoisCol" :data="whoisInfo" ref="whois"></Table>
-	    <hr color="#f5f7f9"/>
-	    <div class="label">域名解析 IP 信息</div>
-	    <Button class="export" type="primary" @click="exportData(1)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
-	    <Table stripe :loading="localLoading" :columns="ipCol" :data="ipInfo" ref="ip"></Table>
+		
+		<hr color="#f5f7f9"/>
+		<div class="label">域名 whois 信息</div>
+		<Button class="export" type="primary" @click="exportData(0)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
+		<Table stripe :loading="remoteLoading" :columns="whoisCol" :data="whoisInfo" ref="whois"></Table>
+		<hr color="#f5f7f9"/>
+		<div class="label">域名解析 IP 信息</div>
+		<Button class="export" type="primary" @click="exportData(1)"><Icon type="ios-download-outline"></Icon>导出为csv</Button>
+		<Table stripe :loading="localLoading" :columns="ipCol" :data="ipInfo" ref="ip"></Table>
 	</div>
 </template>
 
@@ -21,51 +21,50 @@
 				targetDomain: "",			// 要查询的目标域名
 				localLoading: false,		// 基本信息表loading状态
 				remoteLoading: false,		// whois信息表loading状态
-	            lang: "",					// 域名语种
-	            whoisInfo: [],				// 域名whois归属信息
-	            ipInfo: [],					// 域名解析IP信息
-	            // isIdentical: false,			// 域名解析IP是否与whois信息相同
-	            whoisCol: [
-	                {
-	                    title: "注册人",
-	                    key: "registrar"
-	                },
-	                {
-	                    title: "注册机构",
-	                    key: "registrant"
-	                },
-	                {
-	                    title: "注册机构地址",
-	                    key: "address"
-	                },
-	                {
-	                    title: "E-Mail",
-	                    key: "email"
-	                },
-	                {
-	                    title: "注册时间",
-	                    key: "register_date"
-	                },
-	                {
-	                    title: "失效时间",
-	                    key: "expire_date"
-	                }
-	            ],
-	            ipCol: [
-	                {
-	                    title: "解析IP地址",
-	                    key: "ip"
-	                }, 
-	                {
-	                    title: "解析IP地理位置",
-	                    key: "location"
-	                }, 
-	                {
-	                    title: "解析IP归属",
-	                    key: "auth"
-	                }
-	            ]
-	        }
+				lang: "",					// 域名语种
+				whoisInfo: [],				// 域名whois归属信息
+				ipInfo: [],					// 域名解析IP信息
+				whoisCol: [
+					{
+						title: "注册人",
+						key: "registrar"
+					},
+					{
+						title: "注册机构",
+						key: "registrant"
+					},
+					{
+						title: "注册机构地址",
+						key: "address"
+					},
+					{
+						title: "E-Mail",
+						key: "email"
+					},
+					{
+						title: "注册时间",
+						key: "register_date"
+					},
+					{
+						title: "失效时间",
+						key: "expire_date"
+					}
+				],
+				ipCol: [
+					{
+						title: "解析IP地址",
+						key: "ip"
+					}, 
+					{
+						title: "解析IP地理位置",
+						key: "location"
+					}, 
+					{
+						title: "解析IP归属",
+						key: "auth"
+					}
+				]
+			}
 		},
 
 		created () {
@@ -75,12 +74,12 @@
 
 		mounted () {
 			this.whoisInfo = [{
-		        "registrar": "注册人",
-		        "registrant": "注册机构",
-		        "address": "注册机构地址",
-		        "email": "test@email.com",
-		        "register_date": "17-jun-2005",
-		        "expire_date": "17-jun-2020"
+				"registrar": "注册人",
+				"registrant": "注册机构",
+				"address": "注册机构地址",
+				"email": "test@email.com",
+				"register_date": "17-jun-2005",
+				"expire_date": "17-jun-2020"
 			}]
 			// 请求域名基本信息
 			this.localLoading = true
@@ -117,8 +116,8 @@
 				let types = ["whois", "ip"]
 				let names = ["whois信息", "解析IP信息"]
 				this.$refs[types[type]].exportCsv({
-                    filename: `${this.targetDomain}-${names[type]}`
-                })
+					filename: `${this.targetDomain}-${names[type]}`
+				})
 			},
 			// 获取解析IP列表
 			getResolvedIPs () {
@@ -138,8 +137,8 @@ hr{
 	background-color: #f5f7f9;
 }
 .label{
-    margin: 10px;
-    font-size: 16px;
+	margin: 10px;
+	font-size: 16px;
 }
 .export{
 	margin-bottom: 10px;
