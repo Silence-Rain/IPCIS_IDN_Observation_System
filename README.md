@@ -12,6 +12,8 @@ An accumulative observation system of international domain names (IDNs) included
 └── server              # 系统后端(tornado)
 ```
 
+[API 文档](https://silence-rain.cn/IDNOS_doc/index.html)
+
 #### 实现功能
 
 - 国际化域名收集
