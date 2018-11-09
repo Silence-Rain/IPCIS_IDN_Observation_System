@@ -1,38 +1,23 @@
-## IPCIS_Domains_Information_System
+## IPCIS_IDN_Observation_System
 
- IPCIS下属的域名信息分析系统
+ IPCIS下属的国际化域名累计观测系统
 
-A information analysis system included by IPCIS (IP Comprehensive Information System)
+An accumulative observation system of international domain names (IDNs) included by IPCIS (IP Comprehensive Information System)
 
 #### 目录结构
 
 ```sh
-./IPCIS_Domains_Information_System
+./IPCIS_IDN_Observation_System
 ├── client              # 系统前端(Vue.js)
-├── domain_import       # 新域名导入模块(tornado)
 └── server              # 系统后端(tornado)
 ```
 
-#### 依赖
-
-- 前端
-  - Vue.js@2.9.2
-  - vue-router@3.0.1
-  - iView@2.13.0
-  - Echarts@4.0.4
-  - inMap@1.5.6
-- 后端
-  - Python@3.6.3
-  - tornado@5.0.2
-  - pymysql@0.8.1
-  - IPy@0.83
-  - apscheduler@3.5.1
-
 #### 实现功能
 
-- 导入新域名的图形化界面
-- 获取域名基本信息，解析IP信息，whois归属信息
-- 获取域名解析IP通信活动的稳定&最大拓扑结构
-- 获取域名解析IP活动的地理位置分布
-- 获取一段时间内域名通信活动活跃度
+- 国际化域名收集
+- 国际化域名语种分布
+- 国际化域名按语种的地理位置&管理归属分布
+- 单个域名的 whois 信息&解析 IP 信息
+- 单个域名指定时间区间内通信对端的网络拓扑
+- 单个域名指定时间区间内通信对端的地理位置&管理归属统计
 
