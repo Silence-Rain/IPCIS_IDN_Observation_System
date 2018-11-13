@@ -1,6 +1,9 @@
 import io
 import requests
+import sys
+sys.path.append("../")
 from IPy import *
+from config import *
 
 def get_idns_flow_record():
 
@@ -23,7 +26,7 @@ def get_idns_flow_record():
 	for index,ip in enumerate(ips):
 		print(index)
 		url = "http://211.65.197.210:8080/IPCIS/activityDatabase/?IpSets=%s:32&TableName=%s&Mode=1" % (ip, "2018-10-17")
-		proxy = {"http": "http://yunyang:yangyun123@202.112.23.167:8080"}
+		proxy = IPCIS_PROXY
 		r = requests.get(url, proxies=proxy)
 		res = r.json()[ip+":32"]
 		item = res[1]
