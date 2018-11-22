@@ -31,7 +31,7 @@ class GeoDistributionModel(object):
 		opposite_ips = []
 
 		# 取有记录的日期里，最近length天
-		proxy = IPCIS_CONFIG
+		proxy = IPCIS_PROXY
 		url_tables = "http://211.65.197.210:8080/IPCIS/activityDatabase/?Mode=3"
 		r_tables = requests.get(url_tables, proxies=proxy)
 		tables = r_tables.json()["tables"][-length:]
